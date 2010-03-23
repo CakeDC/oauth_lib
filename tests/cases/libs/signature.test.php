@@ -33,7 +33,7 @@ class OAuthSignaturePlaintextTest extends CakeTestCase {
 
 }
 
-/*
+
 class OAuthSignatureHMACSHA1Test extends CakeTestCase {
 
 	public function testThatHmacSha1ImplementsHmacSha1() {
@@ -115,5 +115,5 @@ class OAuthSignatureRsaSHA1Test extends CakeTestCase {
 		$this->assertTrue($result);
 	}
 }
-*/
+
 ?>

@@ -30,13 +30,13 @@ class AccessToken extends ConsumerToken {
 		if ($requestUri != $siteUri) {
 			$this->consumer->uri($requestUri);
 		}
-		$this->response = parent::request($httpMethod, $path, $this, $requestOptions, $params);
+		$this->response = parent::request($httpMethod, $path, $headers, $params, $requestOptions);
 		if ($requestUri != $siteUri) {
 			$this->consumer->uri($siteUri);
 		}
 		return $this->response;
     }
-
+	
 /**
  * Make a regular get request using AccessToken
  *

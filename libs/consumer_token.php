@@ -42,7 +42,6 @@ class ConsumerToken extends Token {
  */
 	public function request($httpMethod, $path, $headers = array(), $params = array(), $requestOptions = array()) {
 		$params['headers'] = $headers;
-		//debug($httpMethod);
 		$this->response = $this->consumer->request($httpMethod, $path, $this, $requestOptions, $params);
 		return $this->response;
 	}
