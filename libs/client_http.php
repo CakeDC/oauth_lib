@@ -6,32 +6,24 @@
  *
  * PHP versions 4 and 5
  *
- * Converge Application Platform
- *
  * Copyright 2007-2008, Cake Development Corporation
  * 							1785 E. Sahara Avenue, Suite 490-423
  * 							Las Vegas, Nevada 89104
  *
  * You may obtain a copy of the License at:
  * License page: http://projects.cakedc.com/licenses/TBD  TBD
- * Copyright page: http://converge.cakedc.com/copyright/
  *
  * @filesource
  * @copyright		Copyright 2007-2008, Cake Development Corporation
- * @link				http://converge.cakedc.com/ Converge Application Platform
- * @package			converge.plugins
- * @subpackage		converge.plugins.oauth.models
- * @since			Converge v 1.0.0.0
- * @version			$Revision: 1128 $
- * @modifiedby		$LastChangedBy: skie $
- * @lastmodified	$Date: 2009-09-16 12:52:27 +0400 (Ср, 16 сен 2009) $
+ * @package			oauth_lib
+ * @subpackage		oauth_lib.libs
  * @license			http://projects.cakedc.com/licenses/TBD  TBD
  */
 /**
  * Short description for class.
  *
- * @package		converge.plugins
- * @subpackage	converge.plugins.oauth.models
+ * @package			oauth_lib
+ * @subpackage		oauth_lib.libs
  */
 
 if (!class_exists('RequestFactory')) {
@@ -148,7 +140,7 @@ class ClientHelper {
 	
 	public function amendUserAgentHeader(&$headers) {
 		if (empty($this->oauthUaString)) {
-			$this->oauthUaString = "OAuth converge v 1.0.0.0";
+			$this->oauthUaString = "OAuth lib v 1.0.0.0";
 		}
 		if (!empty($headers['User-Agent'])) {
 			$headers['User-Agent'] .= ' ' . $this->oauthUaString;

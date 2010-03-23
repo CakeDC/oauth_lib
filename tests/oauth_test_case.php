@@ -4,7 +4,7 @@ SimpleTest::ignore('OauthTestCase');
 /**
  * Oauth Test case. Contains comment 
  *
- * @package converge.tests
+ * @package oauth_lib.tests
  */
 class OauthTestCase extends CakeTestCase {
 

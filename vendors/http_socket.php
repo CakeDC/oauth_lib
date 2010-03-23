@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id: http_socket.php 1128 2009-09-16 08:52:27Z skie $ */
 
 /**
  * HTTP Socket connection class.
@@ -15,13 +14,8 @@
  * @filesource
  * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs
- * @since         CakePHP(tm) v 1.2.0
- * @version       $Revision: 1128 $
- * @modifiedby    $LastChangedBy: skie $
- * @lastmodified  $Date: 2009-09-16 12:52:27 +0400 (Ср, 16 сен 2009) $
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @package		  oauth_lib
+ * @subpackage	  oauth_lib.vendors
  */
 App::import('Core', array('CakeSocket', 'Set', 'Router'));
 
@@ -1000,5 +994,6 @@ class HttpSocket extends CakeSocket {
 		parent::reset($initalState);
 		return true;
 	}
+
 }
 ?>
