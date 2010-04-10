@@ -86,10 +86,7 @@ class OauthLibAppController extends AppController {
  */
 	public function beforeFilter() {
 		if ($this->requireOAuth['enabled']) {
-			App::import('Model', 'OauthLib.ServerRegistry');
-			App::import('Model', 'OauthLib.ServerToken');
-			$this->loadModel('ServerRegistry');
-			$this->loadModel('ServerToken');
+			$this->_loadModels();
 		}
 		$actions = $this->requireOAuth['actions'];
 		if (is_array($actions) && (in_array($this->action, $actions) || in_array('*', $actions)) || $actions == '*') {
@@ -100,6 +97,11 @@ class OauthLibAppController extends AppController {
 		return parent::beforeFilter();
 	}
 
+	protected function _loadModels() {
+		$this->loadModel('ServerRegistry');
+		$this->loadModel('ServerToken');
+	}
+	
 /**
  * Do verify for oauth request
  *
