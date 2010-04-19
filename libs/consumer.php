@@ -18,7 +18,7 @@ class Consumer {
 
 /**
  * consumer key
- * 
+ *
  * @var string $secret
  * @access public
  */
@@ -43,18 +43,18 @@ class Consumer {
  *    'query_string' - via the query part of the url ( option 3. in spec)
  *
  * 'http_method', Default http method used for OAuth Token Requests (defaults to 'post')
- * 
- * @var array $__defaultOptions 
+ *
+ * @var array $__defaultOptions
  * @access private
  */
 	private $__defaultOptions = array(
-		//'oauth_signature_method' => 'HMAC-SHA1', 
-		'signature_method' => 'HMAC-SHA1', 
-		'request_token_uri' => '/oauth/request_token', 
-		'authorize_uri' => '/oauth/authorize', 
-		'access_token_uri' => '/oauth/access_token', 
-		'scheme' => 'header', 
-		'http_method' => 'POST', 
+		//'oauth_signature_method' => 'HMAC-SHA1',
+		'signature_method' => 'HMAC-SHA1',
+		'request_token_uri' => '/oauth/request_token',
+		'authorize_uri' => '/oauth/authorize',
+		'access_token_uri' => '/oauth/access_token',
+		'scheme' => 'header',
+		'http_method' => 'POST',
 		'oauth_version' => "1.0");
 
 /**
@@ -85,7 +85,7 @@ class Consumer {
  * @access public
  */
 	public $httpMethod;
-	
+
 /**
  * Consumer constructor
  *
@@ -96,7 +96,7 @@ class Consumer {
 	public function __construct($consumerKey, $consumerSecret, $options = array()) {
 		$this->initConsumer($consumerKey, $consumerSecret, $options);
 	}
-	
+
 /**
  * Inintialize a new consumer instance by passing it a configuration hash:
  *
@@ -118,6 +118,7 @@ class Consumer {
 	public function init($consumerKey, $consumerSecret, $options = array()) {
 		return $this->initConsumer($consumerKey, $consumerSecret, $options);
 	}
+
 	public function initConsumer($consumerKey, $consumerSecret, $options = array()) {
 		$this->options = array_merge($this->__defaultOptions, $options);
 		OauthHelper::log($options);
@@ -125,6 +126,7 @@ class Consumer {
 		$this->key = $consumerKey;
 		$this->secret = $consumerSecret;
 	}
+
 /**
  * The default http method
  *
@@ -139,9 +141,10 @@ class Consumer {
 			return 'POST';
 		}
 	}
+
 /**
  * The HTTP object for the site
- * 
+ *
  * @return HttpSocket
  * @access public
  */
@@ -162,17 +165,17 @@ class Consumer {
  * Makes a request to the service for a new OAuthRequestToken
  *
  * if oauth_callback wasn't provided, it is assumed that oauth_verifiers
- * will be exchanged out of band 
+ * will be exchanged out of band
  *
  * If request tokens are passed between the consumer and the provider out of
- * band (i.e. callbacks cannot be used), need to use "oob" string per section 6.1.1 
+ * band (i.e. callbacks cannot be used), need to use "oob" string per section 6.1.1
  *
  * @param array $requestOptions
  * @param array $params
  * @return boolean
  */
 	public function getRequestToken($requestOptions = array(), $params = array(), $model = null) {
-		$token = null;		
+		$token = null;
 		if (empty($requestOptions['oauth_callback'])) {
 			$requestOptions['oauth_callback'] = 'oob';
 		}
@@ -183,7 +186,7 @@ class Consumer {
 			return false;
 		}
 	}
-	
+
 /**
  * Create the http request object for a given httpMethod and path
  *
@@ -200,14 +203,14 @@ class Consumer {
 		} else {
 			$data = null;
 		}
-		
+
 		if (isset($params['headers'])) {
 			$headers = $params['headers'];
 			unset($params['headers']);
 		} else {
 			$headers = $params;
 		}
-		
+
 		switch (strtoupper($httpMethod)) {
 			case 'POST':
 				$request = new ClientHttp($socket, $path, $headers, 'POST');
@@ -237,7 +240,8 @@ class Consumer {
 			//$request->Request->registerCustomHeader('Content-Length: ' . strlen($data));
 		}
 		return $request;
-	}	
+	}
+
 /**
  * Creates and signs an http request.
  * It's recommended to use the Token classes to set this up correctly
@@ -255,6 +259,7 @@ class Consumer {
 		$this->sign($request, $token, $requestOptions);
 		return $request;
 	}
+
 /**
  * Creates, signs and performs an http request.
  * It's recommended to use the Token classes to set this up correctly.
@@ -269,13 +274,14 @@ class Consumer {
  * @param Token $token
  * @param array $requestOptions
  * @param array $params
- * @return 
+ * @return
  */
 	public function request($httpMethod, $path, $token = null, $requestOptions = array(), $params = array()) {
 		$http = $this->http();
 		$requestObject = $this->createSignedRequest($http, $httpMethod, $path, $token, $requestOptions, $params);
 		return $requestObject->request();
 	}
+
 /**
  * Creates a request and parses the result as url_encoded. This is used internally for the RequestToken and AccessToken requests.
  *
@@ -315,9 +321,10 @@ class Consumer {
 		}
 		return false;
 	}
+
 /**
  * Sign the Request object. Use this if you have an externally generated http request object you want to sign.
- * 
+ *
  * @param Request $request
  * @param Token $token
  * @param array $requestOptions
@@ -329,9 +336,10 @@ class Consumer {
 		//$options = array_merge(array('scheme' => $this->scheme()), $requestOptions);
 		return $request->oauth($this->http(), $this, $token, $options);
 	}
+
 /**
  * Return the signatureBaseString
- * 
+ *
  * @param Request $request
  * @param Token $token
  * @param array $requestOptions
@@ -344,9 +352,23 @@ class Consumer {
 		$options = array_merge($this->options, $requestOptions);
 		return $request->signatureBaseString($this->http(), $this, $token, $options);
 	}
+
+/**
+ * Exchange for AccessToken on server
+ *
+ * @param RequestToken $requestToken
+ * @param array $options
+ * @param array $params, for example header can passed here
+ * @return boolean
+ */
+	public function getAccessToken($requestToken, $options = array(), $params = array()) {
+		$response = $this->tokenRequest($this->httpMethod(), $this->accessTokenPath(), $requestToken, $options, $params);
+		return new AccessToken($this, $response['oauth_token'], $response['oauth_token_secret']);
+	}
+	
 /**
  * Uri site getter
- * 
+ *
  * @return string
  * @access public
  */
@@ -359,7 +381,7 @@ class Consumer {
 
 /**
  * Uri site getter
- * 
+ *
  * @return string
  * @access public
  */
@@ -374,7 +396,7 @@ class Consumer {
 
 /**
  * Scheme getter
- * 
+ *
  * @access public
  */
 	public function scheme() {
@@ -382,7 +404,7 @@ class Consumer {
 	}
 /**
  * Request token path
- * 
+ *
  * @return string
  * @access public
  */
@@ -391,7 +413,7 @@ class Consumer {
 	}
 /**
  * Authorize path
- * 
+ *
  * @return string
  * @access public
  */
@@ -400,7 +422,7 @@ class Consumer {
 	}
 /**
  * Access token path
- * 
+ *
  * @return string
  * @access public
  */
@@ -409,7 +431,7 @@ class Consumer {
 	}
 /**
  * Request token url
- * 
+ *
  * @return string
  * @access public
  */
@@ -422,7 +444,7 @@ class Consumer {
 	}
 /**
  * Authorize url
- * 
+ *
  * @return string
  * @access public
  */
@@ -435,7 +457,7 @@ class Consumer {
 	}
 /**
  * Access token url
- * 
+ *
  * @return string
  * @access public
  */
@@ -446,6 +468,6 @@ class Consumer {
 			return $this->site() . $this->accessTokenPath();
 		}
 	}
-	
+
 }
 ?>

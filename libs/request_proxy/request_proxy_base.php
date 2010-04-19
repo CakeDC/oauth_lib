@@ -173,6 +173,9 @@ class RequestProxyBase {
  */
 	public function signatureMethod() {
 		$params = $this->parameters();
+		if (!isset($params['oauth_signature_method'])) {
+			return null;
+		}
 		if (is_array($params['oauth_signature_method'])) {
 			return $params['oauth_signature_method'][0];
 		} else {
@@ -196,6 +199,26 @@ class RequestProxyBase {
 		} else {
 			return '';
 		}
+	}
+
+/**
+ * Return XAuth parameters fetched from header
+ *
+ * @return string
+ * @access public
+ */
+    public function xAuthParams() {
+		$headers = array('X_AUTH_MODE' => 'x_auth_mode', 'HTTP_X_AUTH_MODE' => 'x_auth_mode', 'X_AUTH_USERNAME' => 'x_auth_username', 'HTTP_X_AUTH_USERNAME' => 'x_auth_username', 'X_AUTH_PASSWORD' => 'x_auth_password', 'HTTP_X_AUTH_PASSWORD' => 'x_auth_password');
+		$results = array();
+		foreach ($headers as $header => $key) {
+			if (empty($results[$key])) {
+				$header = env($header);
+				if (!empty($header)) {
+					$results[$key] = $header;
+				}
+			}
+		}
+		return $results;
 	}
 
 /**

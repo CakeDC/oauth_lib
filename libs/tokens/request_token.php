@@ -32,10 +32,11 @@ class RequestToken extends ConsumerToken {
  * Exchange for AccessToken on server
  *
  * @param array $options
+ * @param array $params, for example header can passed here
  * @return boolean
  */
-	public function getAccessToken($options = array()) {
-		$response = $this->consumer->tokenRequest($this->consumer->httpMethod(), $this->consumer->accessTokenPath(), $this, $options);
+	public function getAccessToken($options = array(), $params = array()) {
+		$response = $this->consumer->tokenRequest($this->consumer->httpMethod(), $this->consumer->accessTokenPath(), $this, $options, $params);
 		return new AccessToken($this->consumer, $response['oauth_token'], $response['oauth_token_secret']);
 	}
 

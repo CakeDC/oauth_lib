@@ -1,9 +1,9 @@
 <?php 
 	
-App::import('Lib', 'Oauth.AouthHelper');
-App::import('Lib', 'Oauth.Consumer');
-App::import('Lib', 'Oauth.RequestToken');
-App::import('Lib', 'Oauth.RequestFactory');
+App::import('Lib', 'OauthLib.OauthHelper');
+App::import('Lib', 'OauthLib.Consumer');
+App::import('Lib', 'OauthLib.RequestToken');
+App::import('Lib', 'OauthLib.RequestFactory');
 
 
 class OauthShell extends Shell {
@@ -99,6 +99,8 @@ class OauthShell extends Shell {
 			'callback_url' => 'oauth_callback',
 			'request_token_url' => 'request_token_url',
 			'scope' => 'scope',
+			'username' => 'username',
+			'password' => 'password',
 		);
 		
 		foreach ($values as $k => $v) {		
@@ -172,9 +174,53 @@ class OauthShell extends Shell {
 			try {
 				$AccessToken = $RequestToken->getAccessToken(array('oauth_verifier' => $oauthVerifier));
 				$this->out('Response: ');
-				foreach ($AccessToken->tokenParams as $k => $v) {
-					$this->out($k . ': ' . $v);
-				}
+				// foreach ($AccessToken->tokenParams as $k => $v) {
+					// $this->out($k . ' : ' . $v);
+				// }
+				$this->out('token: ' . $AccessToken->token);
+				$this->out('token secret: ' . $AccessToken->tokenSecret);
+			} catch (UnauthorizedException $e) {
+	              $this->out('A problem occurred while attempting to obtain an access token:');
+	              $this->out($e->getMessage());
+	              $this->out($e->requestBody());
+			} catch (Exception $e) {
+				$this->out($e->getMessage());
+			}
+		} catch (UnauthorizedException $e) {
+			  $this->out('A problem occurred while attempting to authorize:');
+			  $this->out($e->getMessage());
+			  $this->out($e->requestBody());
+		} catch (Exception $e) {
+			$this->out($e->getMessage());
+		}
+	}
+		
+	public function xauth() {
+		$options = array(
+			'uri' => $this->options['uri'],
+			'username' => $this->options['username'],
+			'password' => $this->options['password'],
+			'access_token_uri' => $this->options['access_token_url'],
+			'scheme' => $this->options['scheme'],
+			'http_method' => $this->options['method']
+		);
+		$Consumer = new Consumer($this->options['oauth_consumer_key'], $this->options['oauth_consumer_secret'], $options);
+		$Consumer->http = new HttpSocket($this->options['uri']);
+		
+		// parameters for OAuth 1.0a
+		$oauthVerifier = null;
+		
+		$Consumer->init($this->options['oauth_consumer_key'], $this->options['oauth_consumer_secret'], $options);
+		try {
+			
+			try {
+				$AccessToken = $Consumer->getAccessToken(null, array(), array('x_auth_mode' => 'client_auth', 'x_auth_username' => $this->options['username'], 'x_auth_password' => $this->options['password']));
+				$this->out('Response: ');
+				// foreach ($AccessToken->tokenParams as $k => $v) {
+					// $this->out($k . ' : ' . $v);
+				// }
+				$this->out('token: ' . $AccessToken->token);
+				$this->out('token secret: ' . $AccessToken->tokenSecret);
 			} catch (UnauthorizedException $e) {
 	              $this->out('A problem occurred while attempting to obtain an access token:');
 	              $this->out($e->getMessage());
