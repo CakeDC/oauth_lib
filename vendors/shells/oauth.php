@@ -320,7 +320,7 @@ class OauthShell extends Shell {
 		$uri = $socket->buildUri($uri);
 		$AccessToken = new AccessToken($Consumer, $this->options['oauth_token'], $this->options['oauth_token_secret']);
 		if ($AccessToken) {
-          $response = $AccessToken->requestByToken(strtoupper($this->options['method']), $uri);
+          $response = $AccessToken->request(strtoupper($this->options['method']), $uri);
 		  $this->out($response['status']['code'] . ' ');
 		  $this->out($response['body']);
 		}
