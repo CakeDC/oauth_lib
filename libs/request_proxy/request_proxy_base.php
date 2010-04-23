@@ -229,6 +229,7 @@ class RequestProxyBase {
  */
     public function headerParams() {
 		$headers = array('X-HTTP_AUTHORIZATION', 'authorization', 'Authorization', 'HTTP_AUTHORIZATION', 'HTTP_HTTP_AUTHORIZATION', 'HTTP_X-HTTP_AUTHORIZATION');
+		$params = apache_request_headers();
 		foreach ($headers as $header) {
 			$header = env($header);
 			if (!$header) {
@@ -237,27 +238,35 @@ class RequestProxyBase {
 			if (substr($header, 0, 6) != 'OAuth ') {
 				continue;
 			}
-			$header = substr($header, 6, strlen($header));
-			$oauthParams = array();
-			$oauthParamString = preg_split('/[,]/', $header);
-			foreach ($oauthParamString as &$str) {
-				list($key, $value) = preg_split('/[=]/', $str);
-				$key = $this->unescape(trim($key));
-				$value = $this->unescape(trim($value));
-				$len = strlen($value);
-				if ((substr($value, 0, 1) == "\"") && (substr($value, $len-1, 1) == "\"")) {
-					$value = substr($value, 1, $len - 2);
-				}
-				if (substr($key, 0, 6) == 'oauth_') {
-					$oauthParams[$key] = $value;
-				}
+			return $this->_do($header);
+		}
+		foreach ($params as $k => $v) {
+			if (in_array($k, $headers)) {
+				return $this->_do($v);
 			}
-			ksort($oauthParams);
-	        return $oauthParams;
 		}
       return array();
     }
 
+	protected function _do($header) {
+		$header = substr($header, 6, strlen($header));
+		$oauthParams = array();
+		$oauthParamString = preg_split('/[,]/', $header);
+		foreach ($oauthParamString as &$str) {
+			list($key, $value) = preg_split('/[=]/', $str);
+			$key = $this->unescape(trim($key));
+			$value = $this->unescape(trim($value));
+			$len = strlen($value);
+			if ((substr($value, 0, 1) == "\"") && (substr($value, $len-1, 1) == "\"")) {
+				$value = substr($value, 1, $len - 2);
+			}
+			if (substr($key, 0, 6) == 'oauth_') {
+				$oauthParams[$key] = $value;
+			}
+		}
+		ksort($oauthParams);
+		return $oauthParams;
+	}
 /**
  * Unescape wrapper
  *
