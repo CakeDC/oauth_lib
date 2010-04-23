@@ -228,7 +228,7 @@ class RequestProxyBase {
  * @access public
  */
     public function headerParams() {
-		$headers = array('X-HTTP_AUTHORIZATION', 'Authorization', 'HTTP_AUTHORIZATION', 'HTTP_HTTP_AUTHORIZATION', 'HTTP_X-HTTP_AUTHORIZATION');
+		$headers = array('X-HTTP_AUTHORIZATION', 'authorization', 'Authorization', 'HTTP_AUTHORIZATION', 'HTTP_HTTP_AUTHORIZATION', 'HTTP_X-HTTP_AUTHORIZATION');
 		foreach ($headers as $header) {
 			$header = env($header);
 			if (!$header) {
