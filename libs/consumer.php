@@ -174,9 +174,9 @@ class Consumer {
  * @param array $params
  * @return boolean
  */
-	public function getRequestToken($requestOptions = array(), $params = array(), $model = null) {
+	public function getRequestToken($requestOptions = array(), $params = array()) {
 		$token = null;
-		if (empty($requestOptions['oauth_callback'])) {
+		if (!isset($requestOptions['oauth_callback'])) {
 			$requestOptions['oauth_callback'] = 'oob';
 		}
 		$response = $this->tokenRequest($this->httpMethod(), $this->requestTokenPath(), $token, $requestOptions, $params);
