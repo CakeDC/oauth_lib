@@ -87,19 +87,35 @@ class OauthLibAppController extends AppController {
 	public function beforeFilter() {
 		if ($this->requireOAuth['enabled']) {
 			$this->_loadModels();
+			$actions = $this->requireOAuth['actions'];
+			if (is_array($actions) && (in_array($this->action, $actions) || in_array('*', $actions)) || $actions == '*') {
+				$this->verifyOauthRequest();
+			}
+			$this->configureOAuth();
+			$this->_afterOauthChecked();
+		} else {
+			parent::beforeFilter();
 		}
-		$actions = $this->requireOAuth['actions'];
-		if (is_array($actions) && (in_array($this->action, $actions) || in_array('*', $actions)) || $actions == '*') {
-			$this->verifyOauthRequest();
-
-		}
-		$this->configureOAuth();
-		return parent::beforeFilter();
 	}
 
+/**
+ * load oauth server models callback
+ *
+ * @return void
+ * @access protected
+ */
 	protected function _loadModels() {
-		$this->loadModel('ServerRegistry');
-		$this->loadModel('ServerToken');
+		// $this->loadModel('ServerRegistry');
+		// $this->loadModel('ServerToken');
+	}
+
+/**
+ * after Oauth Checked callback
+ *
+ * @return void
+ * @access protected
+ */
+	protected function _afterOauthChecked() {
 	}
 	
 /**

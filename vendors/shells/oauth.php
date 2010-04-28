@@ -294,9 +294,6 @@ class OauthShell extends Shell {
 		}
 		$options = array(
 			'uri' => $this->options['uri'],
-			'access_token_uri' => $this->options['access_token_url'],
-			'authorize_uri' => $this->options['authorize_url'],
-			'request_token_uri' => $this->options['request_token_url'],
 			'scheme' => $this->options['scheme'],
 			'http_method' => $this->options['method']
 		);
