@@ -304,7 +304,7 @@ class OauthShell extends Shell {
 
 		if (!class_exists('HttpSocket')) {
 			//App::import('Core', 'HttpSocket');
-			App::import('Vendor', 'Oauth.HttpSocket');
+			App::import('Vendor', 'OauthLib.HttpSocket');
 		}
 		$socket = & new HttpSocket();
 		$uri = $socket->parseUri($this->options['uri']);

@@ -6,7 +6,7 @@ App::import('Lib', 'OauthLib.RequestProxyController');
 App::import('Lib', 'OauthLib.Consumer');
 App::import('Lib', 'OauthLib.Signature');
 App::import('Lib', 'OauthLib.ConsumerToken');
-App::import('Controller', 'Oauth.OauthAppController');
+App::import('Controller', 'OauthLib.OauthAppController');
 require_once APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests' . DS . 'cases' . DS . 'library' . DS . 'uri.php';
 
 
