@@ -2,6 +2,7 @@
 
 RequestFactory::register('OauthLibAppController', 'RequestProxyController');
 RequestFactory::register('OauthAppController', 'RequestProxyController');
+RequestFactory::register('AppController', 'RequestProxyController');
 if (!class_exists('OauthHelper')) {
 	App::import('Lib', 'OauthLib.OauthHelper');
 }

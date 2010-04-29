@@ -59,7 +59,7 @@ class Signature {
  * @param array $options
  * @access public
  */
-	public function build(&$request, $options = array()) {
+	public function build($request, $options = array()) {
 		$_this = Signature::getInstance();
 		$request = RequestFactory::proxy($request, $options);
 		$signatureMethod = $request->signatureMethod();
@@ -79,7 +79,7 @@ class Signature {
  * @return string request signature
  * @access public
  */
-	public function sign(&$request, $options = array()) {
+	public function sign($request, $options = array()) {
 		$class = Signature::build($request, $options);
 		if (is_object($class)) {
 			return $class->signature();
@@ -96,7 +96,7 @@ class Signature {
  * @return boolean
  * @access public
  */
-	public function verify(&$request, $options = array()) {
+	public function verify($request, $options = array()) {
 		$class = Signature::build($request, $options);
 		if (is_object($class)) {
 			return $class->verify();
@@ -112,7 +112,7 @@ class Signature {
  * @return string
  * @access public
  */
-	public function signatureBaseString(&$request, $options = array()) {
+	public function signatureBaseString($request, $options = array()) {
 		$class = Signature::build($request, $options);
 		if (is_object($class)) {
 			return $class->signatureBaseString();
