@@ -79,6 +79,13 @@ class OauthAuthComponent extends Object {
  */
 	public $tokenData = null;
 
+/**
+ * Component flag that show if oauth authentication passed. This flag allow to implement parallel access 
+ * using Auth and Oauth autentification to same method
+ *
+ * @var boolean
+ * @access public
+ */
 	public $allowed = true;
 	
 /**
