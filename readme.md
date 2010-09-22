@@ -18,7 +18,7 @@ Retrieve access token:
 
 	$AccessToken = $RequestToken->getAccessToken(array('oauth_verifier' => $oauthVerifier));
 
-Perfrom request to protected uri:
+Perform request to protected URI:
 
 	$response = $AccessToken->request('GET', $protectedUri);
 	$response = $AccessToken->request('POST', $protectedUri);
@@ -28,12 +28,12 @@ Perfrom request to protected uri:
 
 OAuth introduces a third role to the traditional client-server authentication model: the resource owner.  In the OAuth model, the client (which is not the resource owner, but is acting on its behalf) requests access to resources controlled by the resource owner, but hosted by the server.  In addition, OAuth allows the server to verify not only the resource owner authorization, but also the identity of the client making the request.
 
-OAuth provides a method for clients to access server resources on behalf of a resource owner (such as a different client or an end-user).  It also provides a process for end-users to authorize third-party access to their server resources without sharing their credentials (typically, a username and password pair), using useragent redirections.
+OAuth provides a method for clients to access server resources on behalf of a resource owner (such as a different client or an end-user).  It also provides a process for end-users to authorize third-party access to their server resources without sharing their credentials (typically, a username and password pair), using UserAgent redirections.
 
 For example, a web user (resource owner) can grant a printing service (client) access to her private photos stored at a photo sharing service (server), without sharing her username and password with the printing service. Instead, she authenticates directly with the photo sharing service which issues the printing service delegation-specific credentials.
 
   
-## Oauth cakephp testing shell ##
+## Oauth CakePHP testing shell ##
 	
 ### Supported commands: ###
 
