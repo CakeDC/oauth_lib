@@ -1,0 +1,1 @@
+cake oauth xauth -consumer_key key -consumer_secret secret -method GET -uri "http://oauth.zz" -debug -secret SEcRET -realm \"\" -username user -password password -access_token_url "/accounts/OAuthGetAccessToken"
