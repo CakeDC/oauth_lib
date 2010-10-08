@@ -179,18 +179,38 @@ class Hmac extends Object {
 			$bin = mhash($this->_getMhashDefinition($this->getHashAlgorithm()), $data, $this->getKey());
 			return bin2hex($bin);
 		}
-		$key = $this->getKey();
-		$hash = $this->getHashAlgorithm();
-		if (strlen($key) <64) {
-			$key = str_pad($key, 64, chr(0));
-		} elseif (strlen($key) >64) {
-			$key = pack($this->_packFormat, $this->_digest($hash, $key, $output));
-		}
-		$padInner = (substr($key, 0, 64) ^ str_repeat(chr(0x36), 64));
-		$padOuter = (substr($key, 0, 64) ^ str_repeat(chr(0x5C), 64));
-		return $this->_digest($hash, $padOuter . pack($this->_packFormat, $this->_digest($hash, $padInner . $data, $output)), $output);
+		
+		return $this->_hmacfn($this->getHashAlgorithm(), $this->getKey(), $data, $output);
 	}
 
+/**
+ * Another implementation for for hmac.
+ * @link http://www.php.net/manual/en/function.sha1.php#39492
+ *
+ * @param string $hashfunc
+ * @param string $key
+ * @param string $data
+ * @param string $output
+ */ 
+	protected function _hmacfn($hashfunc, $key, $data, $output) {
+		$blocksize = 64;
+		if (strlen($key) > $blocksize) {
+			$key = pack($this->_packFormat, $hashfunc($key));
+		}
+		$key = str_pad($key, $blocksize, chr(0x00));
+		$ipad = str_repeat(chr(0x36),$blocksize);
+		$opad = str_repeat(chr(0x5c),$blocksize);
+		$hmac = pack($this->_packFormat,$hashfunc(
+						($key ^ $opad) . pack(
+							$this->_packFormat, $hashfunc(
+								($key ^ $ipad) . $data))));
+		if ($output == self::BINARY) {	
+			return $hmac;
+		}
+		return bin2hex($hmac);
+	}
+		
+	
 /**
  * Method of working around the inability to use mhash constants; this
  * will locate the Constant value of any support Hashing algorithm named
