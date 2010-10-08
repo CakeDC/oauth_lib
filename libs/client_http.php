@@ -423,9 +423,9 @@ class ClientHttp {
 		if (empty($body) && (in_array($request->method, array('POST', 'PUT')))) {
 			$query['header']['Content-Length'] = 0; 
 		}
-		//OauthHelper::log(array('socket::query' => $query));
+		OauthHelper::log(array('socket::query' => $query));
 		$response = $this->sock->request($query);
-		//OauthHelper::log(array('socket::response' => $this->sock->response));
+		OauthHelper::log(array('socket::response' => $this->sock->response));
 		return $this->sock->response;
 	}
 
