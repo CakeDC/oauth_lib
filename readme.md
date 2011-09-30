@@ -1,5 +1,7 @@
 # Oauth library plugin for CakePHP #
 
+Version 1.1
+
 Oauth library is implementation of the [OAuth 1.0 Protocol](http://tools.ietf.org/html/rfc5849).
 
 ## Oauth Consumer implemenatation ##
@@ -94,7 +96,7 @@ Redistributions of files must retain the above copyright notice.
 
 ## Copyright ###
 
-Copyright 2009-2010<br/>
+Copyright 2009-2011<br/>
 [Cake Development Corporation](http://cakedc.com)<br/>
 1785 E. Sahara Avenue, Suite 490-423<br/>
 Las Vegas, Nevada 89104<br/>
