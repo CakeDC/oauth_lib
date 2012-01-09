@@ -1,17 +1,34 @@
 <?php
+/**
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
 App::import('Lib', 'OauthLib.RequestFactory');
 require_once APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests' . DS . 'cases' . DS . 'library' . DS . 'uri.php';
-
 App::import('Lib', 'OauthLib.Consumer');
 App::import('Lib', 'OauthLib.Signature');
 App::import('Lib', 'OauthLib.ConsumerToken');
 App::import('Lib', 'OauthLib.ClientHttp');
 
-
-
+/**
+ * Oauth Tests
+ *
+ * @package oauth_lib
+ * @subpackage oauth_lib.tests.libs
+ */
 class ConsumerGoogleTest extends CakeTestCase {
 
+/**
+ * setup
+ *
+ * @return void
+ */
 	public function setup() {
 		$this->consumer = new Consumer('consumer_key_86cad9', '5888bf0345e5d237',
 			array(
@@ -24,7 +41,6 @@ class ConsumerGoogleTest extends CakeTestCase {
 			));
 		$this->ConsumerToken = new ConsumerToken($this->consumer, 'token_411a7f', '3196ffd991c8ebdb');
 
-
 		$this->requestUri = new URI('http://example.com/test?key=value');
 		$this->requestParameters = array('key'  =>  'value');
 		$this->nonce = "225579211881198842005988698334675835446";
@@ -33,6 +49,11 @@ class ConsumerGoogleTest extends CakeTestCase {
 		$this->consumer->http = new HttpSocket($config);
 	}
 
+/**
+ * _testStepByStepTokenRequest
+ *
+ * @return void
+ */
 	public function _testStepByStepTokenRequest() {
 		$consumerConfig = array(
 	        'uri' => "https://www.google.com",
@@ -66,19 +87,21 @@ class ConsumerGoogleTest extends CakeTestCase {
 		$response = $request->request();
 		$this->assertEqual("200",$response['status']['code']);
 	}
-  
+
+/**
+ * __testLogin
+ *
+ * @return void
+ */
 	public function __testLogin() {
 		$browser = &new SimpleBrowser();		
 		$browser->setMaximumRedirects(5);		
 		$browser->setConnectionTimeout(10000);		
 		$browser->get('https://www.google.com/accounts/OAuthAuthorizeToken');
-		// debug($browser->getTitle());
 		echo "\n\n";
         $browser->setField('Email', 'oauthdotnet@gmail.com');
         $browser->setField('Passwd', 'oauth_password');
         $browser->clickSubmitByName('signIn');
-		debug($browser->getContent());
-		//$this->assertEqual(200, $browser->getTransportError());
 		echo "\n\n";
 		if (preg_match('/url=\'(.+)\'/', $browser->getContent(), $matches)) {
 		echo "\n\n";
@@ -91,8 +114,12 @@ class ConsumerGoogleTest extends CakeTestCase {
 		}
 		return ;
 	}
-	
-  
+
+/**
+ * testGetTokenSequence
+ *
+ * @return void
+ */
 	public function testGetTokenSequence() {
 		$consumerConfig = array(
 	        'uri' => "https://www.google.com",
@@ -107,7 +134,6 @@ class ConsumerGoogleTest extends CakeTestCase {
 		$publicFile = new File(APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests' . DS . 'fixtures' . DS . 'certificates' . DS . 'termie.cer');
 		$consumerConfig['rsa_private']     = $privateFile->read();
 		$consumerConfig['rsa_certificate'] = $publicFile->read();
-		//$this->model->initConsumer("weitu.googlepages.com", "secret", $consumerConfig);
 		$this->consumer = new Consumer("weitu.googlepages.com", "secret", $consumerConfig);
 		$this->requestUri = new URI('https://www.google.com/accounts/OAuthGetRequestToken?scope=https%3A%2F%2Fwww.google.com%2Fm8%2Ffeeds');
 		$config = array('host' => 'www.google.com', 'scheme'  => 'https', 'request' => array('uri' => array('scheme'  => 'https', 'host' => 'www.google.com')));
@@ -122,63 +148,15 @@ class ConsumerGoogleTest extends CakeTestCase {
 		$options2['publicCert'] = $publicFile->read();
 		$options2['privateCertPass']      = '';
 
-
-
 		$this->requestToken = $this->consumer->getRequestToken($options);
 		$this->assertTrue($this->requestToken);
-		//$this->assertEqual("requestkey", $this->model->token);
-		//$this->assertEqual("requestsecret", $this->model->tokenSecret);
-		//$this->assertEqual("http://term.ie/oauth/example/authorize.php?oauth_token=requestkey", $this->model->authorizeUrlFull());
-//debug($this->model->authorizeUrlFull());
-		
-		return;
-		/////
-		/////
-		
-		$browser = &new SimpleBrowser();		
-		$browser->setMaximumRedirects(5);		
-		$browser->setConnectionTimeout(10000);		
-		echo $this->consumer->authorizeUrlFull();
-		$browser->get($this->model->authorizeUrlFull());
-		debug($browser->getTitle());
-		debug($browser->getContent());
-		echo "\n\n";
-        $browser->setField('Email', 'oauthdotnet@gmail.com');
-        $browser->setField('Passwd', 'oauth_password');
-        $browser->clickSubmitByName('signIn');
-		debug($browser->getContent());
-		//$this->assertEqual(200, $browser->getTransportError());
-		echo "\n\n";
-		if (preg_match('/url=\'(.+)\'/', $browser->getContent(), $matches)) {
-		echo "\n\n";
-			echo $matches[1];
-		echo "\n\n";
-			$browser->get($matches[1]);
-			debug($browser->getContent());
-		} else {
-			$this->assertTrue(false);
-		}		
-		
-		return;
-		
-		$this->accessToken = $this->consumer->getAccessToken($options);
-		$this->assertNotNull($this->accessToken);
-		$this->assertEqual("accesskey", $this->consumer->token);
-		$this->assertEqual("accesssecret", $this->consumer->tokenSecret);
-
-		
-		$response = $this->consumer->get("/oauth/example/echo_api.php?ok=hello&test=this");
-		$this->assertNotNull($response);
-		$this->assertEqual("200",$response['status']['code']);
-		$this->assertEqual("ok=hello&test=this", $response['body']);
-
-		$response = $this->consumer->post("/oauth/example/echo_api.php",array('ok' => 'hello','test' => 'this'));
-		$this->assertNotNull($response);
-		$this->assertEqual("200",$response['status']['code']);
-		//debug($response);
-		$this->assertEqual("ok=hello&test=this", $response['body']);
 	}  
 
+/**
+ * requestParametersToS
+ *
+ * @return string
+ */
 	protected function requestParametersToS() {
 		$paramList = array();
 		foreach ($this->requestParameters as $k  =>  $v) {
@@ -187,12 +165,15 @@ class ConsumerGoogleTest extends CakeTestCase {
 		return implode("&", $paramList);
 	}
 
+/**
+ * sorting
+ *
+ * @param string $data 
+ * @return string
+ */
 	public function sorting($data) {
 		$arr = explode('&', $data);
 		sort($arr);
 		return implode('&', $arr);
 	}
-
 }
-
-?>

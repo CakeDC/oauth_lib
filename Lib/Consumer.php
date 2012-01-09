@@ -1,7 +1,15 @@
 <?php
+/**
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
 if (!class_exists('HttpSocket')) {
-	//App::import('Core', 'HttpSocket');
 	App::import('Vendor', 'OauthLib.HttpSocket');
 }
 
@@ -11,44 +19,53 @@ App::import('Lib', 'OauthLib.OauthHelper');
 App::import('Lib', 'OauthLib.AccessToken');
 App::import('Lib', 'OauthLib.RequestToken');
 
-class FailRequestException extends Exception{
+/**
+ * FailRequestException
+ *
+ * @package oauth_lib
+ * @subpackage oauth_lib.libs
+ */
+class FailRequestException extends Exception {
 }
 
+/**
+ * CakePHP Oauth library consumer implementation.
+ *
+ * It provides set of methods to use in combine with Cakephp Auth component to authenticate users
+ * with remote auth servers like twitter.com, so users will have transparent authentication later.
+ *
+ * @package oauth_lib
+ * @subpackage oauth_lib.libs
+ */
 class Consumer {
 
 /**
  * consumer key
  *
- * @var string $secret
- * @access public
+ * @var string
  */
 	public $key;
+
 /**
  * consumer secret key
  *
- * @var string $secret
- * @access public
+ * @var string
  */
 	public $secret;
+
 /**
  * 'oauth_signature_method', Signature method used by server. Defaults to HMAC-SHA1
- *
  * 'request_token_uri', default paths on site. These are the same as the defaults set up by the generators
- *
- * 'scheme',  How do we send the oauth values to the server see
- *  http://oauth.googlecode.com/svn/spec/branches/1.0/drafts/6/spec.html#consumer_req_param for more info
+ * 'scheme',
  *  Possible values:
- *    'header' - via the Authorize header (Default) ( option 1. in spec)
- *    'body' - url form encoded in body of POST request ( option 2. in spec)
- *    'query_string' - via the query part of the url ( option 3. in spec)
- *
+ *    'header' - via the Authorize header (Default)
+ *    'body' - url form encoded in body of POST request
+ *    'query_string' - via the query part of the url
  * 'http_method', Default http method used for OAuth Token Requests (defaults to 'post')
  *
- * @var array $__defaultOptions
- * @access private
+ * @var array
  */
 	private $__defaultOptions = array(
-		//'oauth_signature_method' => 'HMAC-SHA1',
 		'signature_method' => 'HMAC-SHA1',
 		'request_token_uri' => '/oauth/request_token',
 		'authorize_uri' => '/oauth/authorize',
@@ -58,31 +75,30 @@ class Consumer {
 		'oauth_version' => "1.0");
 
 /**
+ * Site location
  *
+ * @var string
  */
 	public $site;
 
 /**
- * Enter description here...
+ * Consumer options
  *
  * @var array $options
- * @access public
  */
 	public $options = array();
 
 /**
  * Http socket instance
  *
- * @var HttpSocket $http
- * @access public
+ * @var HttpSocket
  */
 	public $http;
 
 /**
  * Http request method
  *
- * @var string $httpMethod
- * @access public
+ * @var string
  */
 	public $httpMethod;
 
@@ -132,7 +148,6 @@ class Consumer {
  *
  * @param AppModel $model
  * @return string
- * @access public
  */
 	public function httpMethod() {
 		if (isset($this->options['http_method'])) {
@@ -146,7 +161,6 @@ class Consumer {
  * The HTTP object for the site
  *
  * @return HttpSocket
- * @access public
  */
 	public function http() {
 		if (!empty($this->http)) {
@@ -291,10 +305,8 @@ class Consumer {
  * @param array $requestOptions
  * @param array $params
  * @return array
- * @access public
  */
 	public function tokenRequest($httpMethod, $path, &$token = null, $requestOptions = array(), $params = array()) {
-	//debug(array($httpMethod, $path, $token, $requestOptions, $params));
 		$response = $this->request($httpMethod, $path, $token, $requestOptions, $params);
 		$code = $response['status']['code'];
 		if ($code >= 200 && $code <= 299) {
@@ -329,7 +341,6 @@ class Consumer {
  * @param Token $token
  * @param array $requestOptions
  * @return Request
- * @access public
  */
 	public function sign(&$request, $token = null, $requestOptions = array()) {
 		$options = array_merge($this->options, $requestOptions);
@@ -344,7 +355,6 @@ class Consumer {
  * @param Token $token
  * @param array $requestOptions
  * @return string
- * @access public
  */
 	public function signatureBaseString($request, $token = null, $requestOptions = array()) {
 		$localOptions = array('scheme' => $this->scheme());
@@ -365,12 +375,11 @@ class Consumer {
 		$response = $this->tokenRequest($this->httpMethod(), $this->accessTokenPath(), $requestToken, $options, $params);
 		return new AccessToken($this, $response['oauth_token'], $response['oauth_token_secret']);
 	}
-	
+
 /**
  * Uri site getter
  *
  * @return string
- * @access public
  */
 	public function site() {
 		if (isset($this->options['uri'])) {
@@ -383,7 +392,6 @@ class Consumer {
  * Uri site getter
  *
  * @return string
- * @access public
  */
 	public function uri($customUri = null) {
 		if ($customUri) {
@@ -397,43 +405,42 @@ class Consumer {
 /**
  * Scheme getter
  *
- * @access public
  */
 	public function scheme() {
 		return $this->options['scheme'];
 	}
+
 /**
  * Request token path
  *
  * @return string
- * @access public
  */
  	public function requestTokenPath() {
 		return $this->options['request_token_uri'];
 	}
+
 /**
  * Authorize path
  *
  * @return string
- * @access public
  */
 	public function authorizePath() {
 		return $this->options['authorize_uri'];
 	}
+
 /**
  * Access token path
  *
  * @return string
- * @access public
  */
 	public function accessTokenPath() {
 		return $this->options['access_token_uri'];
 	}
+
 /**
  * Request token url
  *
  * @return string
- * @access public
  */
 	public function requestTokenUrl() {
 		if (isset($this->options['request_token_url'])) {
@@ -442,24 +449,24 @@ class Consumer {
 			return $this->site() . $this->requestTokenPath();
 		}
 	}
+
 /**
  * Authorize url
  *
  * @return string
- * @access public
  */
 	public function authorizeUrl() {
 		if (isset($this->options['authorize_url'])) {
 			return $this->options['authorize_url'];
-		} else {
+	} else {
 			return $this->site() . $this->authorizePath();
 		}
 	}
+
 /**
  * Access token url
  *
  * @return string
- * @access public
  */
 	public function accessTokenUrl() {
 		if (isset($this->options['access_token_url'])) {
@@ -468,6 +475,4 @@ class Consumer {
 			return $this->site() . $this->accessTokenPath();
 		}
 	}
-
 }
-?>

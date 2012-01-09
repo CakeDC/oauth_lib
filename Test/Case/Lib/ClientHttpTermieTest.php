@@ -1,4 +1,13 @@
 <?php
+/**
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
 App::import('Lib', 'OauthLib.ClientHttp');
 App::import('Lib', 'OauthLib.RequestFactory');
@@ -8,8 +17,19 @@ App::import('Lib', 'OauthLib.RequestProxyController');
 App::import('Controller', 'OauthLib.OauthAppController');
 require_once APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests' . DS . 'cases' . DS . 'library' . DS . 'uri.php';
 
-class NetHttpClientTermieTest extends CakeTestCase {
+/**
+ * Oauth Tests
+ *
+ * @package oauth_lib
+ * @subpackage oauth_lib.tests.libs
+ */
+class ClientHttpTermieTest extends CakeTestCase {
 
+/**
+ * setup
+ *
+ * @return void
+ */
 	public function setup() {
 		$this->consumer = new Consumer('consumer_key_86cad9', '5888bf0345e5d237');
 		$this->requestUri = & new URI('http://example.com/test?key=value');
@@ -22,7 +42,11 @@ class NetHttpClientTermieTest extends CakeTestCase {
 	}
 
 /**
- * need to analyze why term.ie some times return error
+ * testHmacSha1
+ *
+ * Need to analyze why term.ie some times return error
+ *
+ * @return void
  */
 	public function testHmacSha1() {
 		$signatureMethod = 'HMAC-SHA1';
@@ -52,7 +76,11 @@ class NetHttpClientTermieTest extends CakeTestCase {
 	}
 	
 /**
- * need to analyze why term.ie some times return error
+ * testPlaintext
+ * 
+ * Need to analyze why term.ie some times return error
+ *
+ * @return void
  */
 	public function testPlaintext() {
 		$signatureMethod = 'PLAINTEXT';
@@ -82,7 +110,11 @@ class NetHttpClientTermieTest extends CakeTestCase {
 	}
 	
 /**
- * need to analyze why term.ie some times return error
+ * testRsaSha1
+ *
+ * Need to analyze why term.ie some times return error
+ *
+ * @return void
  */
 	public function testRsaSha1() {
 		$signatureMethod = 'RSA-SHA1';
@@ -92,7 +124,6 @@ class NetHttpClientTermieTest extends CakeTestCase {
 		$timestamp = time();
 		$config = array('host' => 'term.ie', 'request' => array('uri' => array('host' => 'term.ie')));
 		$http = new HttpSocket($config);
-		//$http = & new ClientHttp($requestUri->toString());
 		$token = null;
 		
 		$requestParams = array('scheme'  =>  'query_string', 'nonce'  =>  $nonce, 'timestamp'  =>  $timestamp, 'signature_method'  => $signatureMethod);
@@ -116,8 +147,12 @@ class NetHttpClientTermieTest extends CakeTestCase {
 		$this->assertEqual("200", $response['status']['code']);
 		$this->assertEqual("oauth_token=requestkey&oauth_token_secret=requestsecret", $response['body']);
 	}
-	
 
+/**
+ * requestParametersToS
+ *
+ * @return string
+ */
 	protected function requestParametersToS() {
 		$paramList = array();
 		foreach($this->requestParameters as $k => $v) {
@@ -125,11 +160,16 @@ class NetHttpClientTermieTest extends CakeTestCase {
 		}
 		return implode("&", $paramList);
 	}
-	
+
+/**
+ * sorting
+ *
+ * @param string $data 
+ * @return string
+ */
 	public function sorting($data) {
 		$arr = explode('&', $data);
 		sort($arr);
 		return implode('&', $arr);
 	}
 }
-?>

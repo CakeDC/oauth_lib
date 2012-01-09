@@ -1,4 +1,13 @@
 <?php
+/**
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
 App::import('Lib', 'OauthLib.RequestFactory');
 App::import('Lib', 'OauthLib.RequestFactory');
@@ -8,7 +17,19 @@ require_once APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests' . DS . 'cases' . 
 
 App::import('File', 'OauthTestCase', true, array(APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests'), 'oauth_test_case.php');
 
+/**
+ * Oauth Tests
+ *
+ * @package oauth_lib
+ * @subpackage oauth_lib.tests.libs
+ */
 class ConsumerTest extends OauthTestCase {
+
+/**
+ * setup
+ *
+ * @return void
+ */
 	public function setup() {
 		$this->consumer = new Consumer('consumer_key_86cad9', '5888bf0345e5d237',
 			array('uri' => 'http://blabla.bla',
@@ -27,6 +48,11 @@ class ConsumerTest extends OauthTestCase {
 		$this->consumer->http = new HttpSocket($config);
 	}
 
+/**
+ * testInitializer
+ *
+ * @return void
+ */
 	public function testInitializer() {
 	    $this->assertEqual('consumer_key_86cad9', $this->consumer->key);
 	    $this->assertEqual('5888bf0345e5d237', $this->consumer->secret);
@@ -40,6 +66,11 @@ class ConsumerTest extends OauthTestCase {
 	    $this->assertEqual('GET', $this->consumer->httpMethod());
 	}
 
+/**
+ * testDefaults
+ *
+ * @return void
+ */
 	public function testDefaults() {
 		$this->consumer = new Consumer('key', 'secret', array('uri' => 'http://test.com'));
 	    $this->assertEqual('key', $this->consumer->key);
@@ -54,6 +85,11 @@ class ConsumerTest extends OauthTestCase {
 	    $this->assertEqual('POST', $this->consumer->httpMethod());
 	}
 
+/**
+ * testOverridePaths
+ *
+ * @return void
+ */
 	public function testOverridePaths() {
 		$this->consumer->initConsumer('key', 'secret', array(
 			  'uri' => 'http://test.com',
@@ -72,13 +108,23 @@ class ConsumerTest extends OauthTestCase {
 		$this->assertEqual('POST', $this->consumer->httpMethod()); 
 	}
 
+/**
+ * testThatSigningAuthHeadersOnGetRequestsWorks
+ *
+ * @return void
+ */
 	public function testThatSigningAuthHeadersOnGetRequestsWorks() {
 		$request = new ClientHttp($this->consumer->http, $this->requestUri->path  . '?' . $this->requestParametersToS(), array(), 'GET');
 		$this->Token->sign($request, array('nonce' => $this->nonce, 'timestamp' => $this->timestamp));
 		$this->assertEqual('GET', $request->method);
 		$this->assertEqual($this->toOrderedArray("OAuth oauth_nonce=\"225579211881198842005988698334675835446\", oauth_signature_method=\"HMAC-SHA1\", oauth_token=\"token_411a7f\", oauth_timestamp=\"1199645624\", oauth_consumer_key=\"consumer_key_86cad9\", oauth_signature=\"1oO2izFav1GP4kEH2EskwXkCRFg%3D\", oauth_version=\"1.0\""), $this->toOrderedArray($request->authorization));
 	}
-	
+
+/**
+ * testThatSettingSignatureMethodOnConsumerEffectsSigning
+ *
+ * @return void
+ */
  	public function testThatSettingSignatureMethodOnConsumerEffectsSigning() {
 		$request = new ClientHttp($this->consumer->http, $this->requestUri->path  . '?' . $this->requestParametersToS(), array(), 'GET');
 		$this->consumer->options['signature_method'] = 'PLAINTEXT';
@@ -88,6 +134,11 @@ class ConsumerTest extends OauthTestCase {
 		$this->assertPattern('/oauth_signature_method="PLAINTEXT"/', $request->authorization);
 	} 
 
+/**
+ * testThatSettingSignatureMethodOnConsumerEffectsSignatureBaseString
+ *
+ * @return void
+ */
 	function testThatSettingSignatureMethodOnConsumerEffectsSignatureBaseString() {
 		$request = new ClientHttp($this->consumer->http, $this->requestUri->path  . '?' . $this->requestParametersToS(), array(), 'GET');
 		$this->consumer->options['signature_method'] = 'PLAINTEXT';
@@ -96,7 +147,12 @@ class ConsumerTest extends OauthTestCase {
 		$this->assertNoPattern('/HMAC-SHA1/', $signatureBaseString);
 		$this->assertPattern("/{$this->consumer->secret}%26/", $signatureBaseString);
 	}
-	
+
+/**
+ * testThatPlaintextSignatureWorks
+ *
+ * @return void
+ */
 	function testThatPlaintextSignatureWorks() {
 		$this->consumer->initConsumer('key', 'secret', array(
 	        'uri' => 'http://term.ie',
@@ -118,7 +174,12 @@ class ConsumerTest extends OauthTestCase {
 		$this->assertEqual('echo=hello', $response['body']);
 		
 	}
-		
+
+/**
+ * testThatSigningAuthHeadersOnPostRequestsWorks
+ *
+ * @return void
+ */
 	public function testThatSigningAuthHeadersOnPostRequestsWorks() {
 		$request = new ClientHttp($this->consumer->http, $this->requestUri->path, array(), 'POST');
 	    $request->setFormData($this->requestParameters);
@@ -129,6 +190,11 @@ class ConsumerTest extends OauthTestCase {
 		$this->assertEqual($this->toOrderedArray("OAuth oauth_nonce=\"225579211881198842005988698334675835446\", oauth_signature_method=\"HMAC-SHA1\", oauth_token=\"token_411a7f\", oauth_timestamp=\"1199645624\", oauth_consumer_key=\"consumer_key_86cad9\", oauth_signature=\"26g7wHTtNO6ZWJaLltcueppHYiI%3D\", oauth_version=\"1.0\""), $this->toOrderedArray($request->authorization));
 	}
 
+/**
+ * testThatSigningPostParamsWorks
+ *
+ * @return void
+ */
 	public function testThatSigningPostParamsWorks() {
 		$request = & new ClientHttp($this->consumer->http, $this->requestUri->path, array(), 'POST');
 	    $request->setFormData($this->requestParameters);
@@ -140,6 +206,11 @@ class ConsumerTest extends OauthTestCase {
 	    $this->assertEqual(null, $request->authorization);
 	}
 
+/**
+ * testThatUsingAuthHeadersOnGetOnCreateSignedRequestsWorks
+ *
+ * @return void
+ */
 	public function testThatUsingAuthHeadersOnGetOnCreateSignedRequestsWorks() {
 		$request = $this->consumer->createSignedRequest($this->consumer->http, 'get', $this->requestUri->path . "?" . $this->requestParametersToS(), $this->Token, array('nonce'  =>  $this->nonce, 'timestamp'  =>  $this->timestamp),array('data'  =>  $this->requestParameters));
 	    $this->assertEqual('GET', $request->method);
@@ -147,6 +218,11 @@ class ConsumerTest extends OauthTestCase {
 	    $this->assertEqual($this->toOrderedArray("OAuth oauth_nonce=\"225579211881198842005988698334675835446\", oauth_signature_method=\"HMAC-SHA1\", oauth_token=\"token_411a7f\", oauth_timestamp=\"1199645624\", oauth_consumer_key=\"consumer_key_86cad9\", oauth_signature=\"1oO2izFav1GP4kEH2EskwXkCRFg%3D\", oauth_version=\"1.0\""), $this->toOrderedArray($request->authorization));
 	}
 
+/**
+ * testThatUsingAuthHeadersOnPostOnCreateSignedRequestsWorks
+ *
+ * @return void
+ */
 	public function testThatUsingAuthHeadersOnPostOnCreateSignedRequestsWorks() {
 		$request = $this->consumer->createSignedRequest($this->consumer->http, 'post', $this->requestUri->path,$this->Token, array('nonce' => $this->nonce, 'timestamp' => $this->timestamp), array('data'  =>  $this->requestParameters));
 	    $this->assertEqual('POST', $request->method);
@@ -155,6 +231,11 @@ class ConsumerTest extends OauthTestCase {
 	    $this->assertEqual($this->toOrderedArray("OAuth oauth_nonce=\"225579211881198842005988698334675835446\", oauth_signature_method=\"HMAC-SHA1\", oauth_token=\"token_411a7f\", oauth_timestamp=\"1199645624\", oauth_consumer_key=\"consumer_key_86cad9\", oauth_signature=\"26g7wHTtNO6ZWJaLltcueppHYiI%3D\", oauth_version=\"1.0\""), $this->toOrderedArray($request->authorization));
 	}
 
+/**
+ * testThatSigningPostParamsWorks2
+ *
+ * @return void
+ */
 	public function testThatSigningPostParamsWorks2() {
 		$request = $this->consumer->createSignedRequest($this->consumer->http, 'post', $this->requestUri->path, $this->Token, array('scheme'  =>  'body', 'nonce'  =>  $this->nonce, 'timestamp'  =>  $this->timestamp), array('data'  =>  $this->requestParameters));
 	    $this->assertEqual('POST', $request->method);
@@ -163,6 +244,11 @@ class ConsumerTest extends OauthTestCase {
 	    $this->assertEqual(null, $request->authorization);
 	}
 
+/**
+ * testStepByStepTokenRequest
+ *
+ * @return void
+ */
 	function testStepByStepTokenRequest() {
 		$this->consumer->initConsumer('key', 'secret', array(
 	        'uri' => 'http://term.ie',
@@ -186,8 +272,12 @@ class ConsumerTest extends OauthTestCase {
 		$this->assertEqual('200', $response['status']['code']);
 		$this->assertEqual('oauth_token=requestkey&oauth_token_secret=requestsecret',$response['body']);
 	}
-  
-	//function getTests() {return array('start', 'testGetTokenSequence', 'end');}
+
+/**
+ * testGetTokenSequence
+ *
+ * @return void
+ */
 	public function testGetTokenSequence() {
 		$this->consumer->initConsumer('key', 'secret',
 			array(
@@ -224,6 +314,11 @@ class ConsumerTest extends OauthTestCase {
 		$this->assertEqual('ok=hello&test=this', $response['body']);
 	}  
 
+/**
+ * testGetTokenSequence
+ *
+ * @return void
+ */
 	public function _testGetTokenWithAdditionalArguments() {
 		$this->consumer->initConsumer('key', 'secret',
 			array(
@@ -234,21 +329,11 @@ class ConsumerTest extends OauthTestCase {
 		$this->requestUri = new URI('http://term.ie');
 		$config = array('host' => 'term.ie', 'request' => array('uri' => array('host' => 'term.ie')));
 		$this->consumer->http = new HttpSocket($config);
-    
 
 		$debug = '';
 		$http = $this->consumer->http();
 		$this->requestToken = $this->consumer->getRequestToken(array(), array('scope' => "http://www.google.com/calendar/feeds http://picasaweb.google.com/data"), $this->Token);
-		// debug($this->requestToken);
-		// debug($this->consumer->http);
-		// debug($http->response['raw']['header']);
-		// debug($http->response['raw']['body']);
     
 		$this->assertPattern('/"scope=http%3a%2f%2fwww.google.com%2fcalendar%2ffeeds%20http%3a%2f%2fpicasaweb.google.com%2fdata"/', $http->response['raw']['body']);
-  }
-	
- 
-	
+	}
 }
-
-?>

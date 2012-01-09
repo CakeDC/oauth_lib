@@ -996,4 +996,3 @@ class HttpSocket extends CakeSocket {
 	}
 
 }
-?>

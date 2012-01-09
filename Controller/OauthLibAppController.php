@@ -1,53 +1,43 @@
 <?php
-
 /**
- * Short description for file.
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
  *
- * Long description for file
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
  *
- * PHP versions 4 and 5
- *
- * Copyright 2007-2008, Cake Development Corporation
- * 							1785 E. Sahara Avenue, Suite 490-423
- * 							Las Vegas, Nevada 89104
- *
- * You may obtain a copy of the License at:
- * License page: http://projects.cakedc.com/licenses/TBD  TBD
- *
- * @filesource
- * @copyright		Copyright 2007-2008, Cake Development Corporation
- * @package			oauth_lib
- * @subpackage		oauth_lib
- * @license			http://projects.cakedc.com/licenses/TBD  TBD
- */
-/**
- * Short description for class.
- *
- * @package			oauth_lib
- * @subpackage		oauth_lib
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 if (!class_exists('Signature')) {
-	App::uses('Signature', 'OauthLib.Lib');
+	App::import('Lib', 'OauthLib.Signature');
 }if (!class_exists('RequestProxyController')) {
-	App::uses('RequestProxyController', 'OauthLib.Lib');
+	App::import('Lib', 'OauthLib.RequestProxyController');
 }
 if (!class_exists('OauthHelper')) {
-	App::uses('OauthHelper', 'OauthLib.Lib');
+	App::import('Lib', 'OauthLib.OauthHelper');
 }
 if (!class_exists('RequestFactory')) {
-	App::uses('RequestFactory', 'OauthLib.Lib');
+	App::import('Lib', 'OauthLib.RequestFactory');
 }
 if (!class_exists('ClientHttp')) {
-	App::uses('ClientHttp', 'OauthLib.Lib');
+	App::import('Lib', 'OauthLib.ClientHttp');
 }
 
+/**
+ * CakePHP Oauth library
+ *
+ * It provides set of methods to use authenticate requests signed with oauth. 
+ * Supposed to be used with oauth servers implementations.
+ *
+ * @package oauth_lib
+ */
 class OauthLibAppController extends AppController {
+
 /**
  * Name
  *
  * @var string $name
- * @access public
  */
 	public $name = 'OAuthRequests';
 
@@ -55,7 +45,6 @@ class OauthLibAppController extends AppController {
  * Flag that identify oauth signed request actions
  *
  * @var string $useOauth
- * @access public
  */
 	public $useOauth = false;
 
@@ -63,7 +52,6 @@ class OauthLibAppController extends AppController {
  * Parameters show which action need to check with verifyOauthSignature
  *
  * @var array $requireOAuth
- * @access public
  */
 	public $requireOAuth = array(
 		'actions' => array(),
@@ -73,7 +61,6 @@ class OauthLibAppController extends AppController {
  * tokenData, is ServerToken for the request after verifyOauthSignature
  *
  * @var string $tokenData
- * @access public
  */
 	public $tokenData = null;
 
@@ -82,7 +69,6 @@ class OauthLibAppController extends AppController {
  * Load Server models and verify oauth request
  *
  * @return boolean
- * @access public
  */
 	public function beforeFilter() {
 		if ($this->requireOAuth['enabled']) {
@@ -102,11 +88,15 @@ class OauthLibAppController extends AppController {
  * load oauth server models callback
  *
  * @return void
- * @access protected
  */
 	public function _loadOauthModels() {
 	}
-	
+
+/**
+ * load models
+ *
+ * @return void
+ */
 	public function _loadModels() {
 	}
 
@@ -114,7 +104,6 @@ class OauthLibAppController extends AppController {
  * after Oauth Checked callback
  *
  * @return void
- * @access protected
  */
 	public function _afterOauthChecked() {
 	}
@@ -123,18 +112,15 @@ class OauthLibAppController extends AppController {
  * Do verify for oauth request
  *
  * @return boolean
- * @access public
  */
 	public function verifyOauthRequest() {
 		return $this->verifyOauthSignature();
-		//return ($this->verifyOauthSignature() && isset($this->{$providerInstance}->data['id']));
 	}
 
 /**
  * Check oauth request signature
  *
  * @return boolean
- * @access public
  */
 	public function verifyOauthSignature() {
 		$proxy = & new RequestProxyController($this);
@@ -144,9 +130,13 @@ class OauthLibAppController extends AppController {
 			$token = $params['oauth_token'];
 		}
 		$serverRegistry = & new ServerRegistry;
-		$this->tokenData = $serverRegistry->AccessServerToken->find(array('AccessServerToken.token' => $token, 'AccessServerToken.authorized' => 1));
+		$this->tokenData = $serverRegistry->AccessServerToken->find(array(
+			'AccessServerToken.token' => $token,
+			'AccessServerToken.authorized' => 1));
 		try {
-			$valid = Signature::verify($this, array('consumer_secret' => $this->tokenData['ServerRegistry']['consumer_secret'], 'token_secret' => $this->tokenData['AccessServerToken']['token_secret']));
+			$valid = Signature::verify($this, array(
+				'consumer_secret' => $this->tokenData['ServerRegistry']['consumer_secret'],
+				'token_secret' => $this->tokenData['AccessServerToken']['token_secret']));
 		} catch(Exception $e) {
 			$valid = false;
 		}
@@ -160,37 +150,24 @@ class OauthLibAppController extends AppController {
 	}
 
 /**
- * Before render callback
- *
- * @return boolean
- * @access public
- */
-	public function beforeRender() {
-		//$this->applyOAuth();
-		return parent::beforeRender();
-	}
-
-/**
  * Configure oauth common settings
  *
  * @return boolean
- * @access public
  */
 	public function configureOAuth($consumer = null, $token = null, $options = array()) {
 		$this->default = array( 'consumer' => $consumer,
-			'token' => $token,
-			'scheme' => 'header',
-			'signature_method' => null,
-			'nonce' => null,
-			'timestamp' => null);
+			   'token' => $token,
+			   'scheme' => 'header',
+			   'signature_method' => null,
+			   'nonce' => null,
+			   'timestamp' => null);
 		$this->options = array_merge($this->default, $options);
-	}
+    }
 
 /**
  * Signing oauth request
  *
  * @return boolean
- * @access public
  */
 	public function applyOAuth() {
 		$options = array_merge($this->default, $this->options);
@@ -211,7 +188,7 @@ class OauthLibAppController extends AppController {
 /**
  * Header signing auth method implementation
  *
- * @access private
+ * @return void
  */
 	private function __setOAuthHeader() {
 		header('Authorization:' . $this->oauthHelper->header());
@@ -221,20 +198,18 @@ class OauthLibAppController extends AppController {
  * Configure oauth parameters
  *
  * @return boolean
- * @access public
  */
-	public function setOAuthParameters() {
+	function setOAuthParameters() {
 		$this->queryParameters = $this->oauthHelper->parametersWithOauth();
 		$this->queryParameters = array_merge($this->queryParameters, array('oauth_signature' => $this->oauthHelper->signature()));
 		return $this->queryParameters;
-	}
+    }
 
 /**
  * Not implemented!
  * Possible need to implemented in the special view class
  *
  * @return boolean
- * @access private
  */
 	private function __setOAuthBody() {
 	}
@@ -244,7 +219,6 @@ class OauthLibAppController extends AppController {
  * Will not implemented
  *
  * @return boolean
- * @access private
  */
 	private function __setOAuthQueryString() {
 	}
@@ -253,7 +227,6 @@ class OauthLibAppController extends AppController {
  * Oauth request parameters
  *
  * @return boolean
- * @access public
  */
 	public function oauthParameters() {
 		$proxy = RequestFactory::proxy($this);
@@ -264,7 +237,6 @@ class OauthLibAppController extends AppController {
  * Build url for redirection
  *
  * @return string
- * @access protected
  */
 	protected function _gatherUrl() {
 		$params = $this->params['url'];
@@ -281,6 +253,4 @@ class OauthLibAppController extends AppController {
 		}
 		return $url;
 	}
-
 }
-?>

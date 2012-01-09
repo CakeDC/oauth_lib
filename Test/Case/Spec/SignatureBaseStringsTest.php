@@ -1,20 +1,29 @@
 <?php 
-
-/*  See http://oauth.net/core/1.0/ *anchor14
+/**
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
  *
- * 9.1.  Signature Base String
- * 
- * The Signature Base String is a consistent reproducible concatenation of the request elements
- * into a single string. The string is used as an input in hashing or signing algorithms. The 
- * HMAC-SHA1 signature method provides both a standard and an example of using the Signature 
- * Base String with a signing algorithm to generate signatures. All the request parameters MUST 
- * be encoded as described in Parameter Encoding prior to constructing the Signature Base String.
- */ 
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
 App::import('File', 'OauthTestCase', true, array(APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests'), 'oauth_test_case.php');
 
-class SignatureBaseStringTest  extends OauthTestCase {
-  
+/**
+ * Testing Signature Base String based on specification
+ *
+ * @package oauth_lib
+ * @subpackage oauth_lib.tests.spec
+ */
+class SignatureBaseStringTest extends OauthTestCase {
+
+/**
+ * testA
+ *
+ * @return void
+ */
 	public function testA() {
 		$parameters = array(
 		  'oauth_consumer_key' => 'dpf43f3p2l4k3l03',
@@ -29,24 +38,39 @@ class SignatureBaseStringTest  extends OauthTestCase {
 
 		$this->assertSignatureBaseString($baseString, $parameters, 'GET', "http://photos.example.net/photos");
 	}
+
 /*
  * These are from the wiki http://wiki.oauth.net/TestCases
  * in the section Concatenate Test Elements
  */
- 
+
+/**
+ * testWikiSimpleWithEndingSlash
+ *
+ * @return void
+ */
 	public function testWikiSimpleWithEndingSlash() {
 		$parameters = array('n' => 'v');
 		$baseString = 'GET&http%3A%2F%2Fexample.com%2F&n%3Dv';
 		$this->assertSignatureBaseString($baseString, $parameters, 'GET', "http://example.com/");
 	}
 
-
+/**
+ * testWikiSimpleWithoutEndingSlash
+ *
+ * @return void
+ */
 	public function testWikiSimpleWithoutEndingSlash() {
 		$parameters = array('n' => 'v');
 		$baseString = 'GET&http%3A%2F%2Fexample.com%2F&n%3Dv';
 		$this->assertSignatureBaseString($baseString, $parameters, 'GET', "http://example.com");
 	}
 
+/**
+ * testWikiRequestToken
+ *
+ * @return void
+ */
 	public function testWikiRequestToken() {
 		$parameters = array(
 			'oauth_version' => '1.0',
@@ -60,15 +84,30 @@ class SignatureBaseStringTest  extends OauthTestCase {
 		$this->assertSignatureBaseString($baseString, $parameters, 'POST', "https://photos.example.net/request_token");
 	}
 
+/**
+ * assertSignatureBaseString
+ *
+ * @param string $expected 
+ * @param string $params 
+ * @param string $method 
+ * @param string $uri 
+ * @param string $message 
+ * @return void
+ */
 	public function assertSignatureBaseString($expected, $params = array(), $method = 'GET', $uri = "http://photos.example.net/photos",$message = "Signature Base String does not match") {
 		$this->assertEqual($expected, $this->signatureBaseString($params, $method, $uri), $message);
 	}
 
-
+/**
+ * signatureBaseString
+ *
+ * @param string $params 
+ * @param string $method 
+ * @param string $uri 
+ * @return void
+ */
 	public function signatureBaseString($params = array(), $method = 'GET', $uri = "http://photos.example.net/photos") {
 		$Request = $this->request($params, $method, $uri);
 		return $Request->signatureBaseString();
 	}
-
 }
-?>

@@ -1,19 +1,33 @@
 <?php
+/**
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
+/**
+ * Request proxy base class
+ * 
+ * @package oauth_lib
+ * @subpackage oauth_lib.libs.request_proxy
+ */
 class RequestProxyBase {
+
 /**
  * Request Object
  *
- * @var Object $request
- * @access public
+ * @var Object
  */
 	public $request;
 
 /**
  * Configuaration options
  *
- * @var array $options
- * @access public
+ * @var array
  */
 	public $options;
 
@@ -21,7 +35,6 @@ class RequestProxyBase {
  *  Additional configuration parameters
  *
  * @var array $parameters
- * @access public
  */
 	public $parameters;
 
@@ -30,7 +43,6 @@ class RequestProxyBase {
  *
  * @param Object $request
  * @param array $options
- * @access public
  */
 	public function __construct(&$request, $options = array()) {
 		$this->request = $request;
@@ -41,7 +53,6 @@ class RequestProxyBase {
  * Register proxy class in factory
  *
  * @param $class name of class to proxy
- * @access public
  */
 	public function proxies($class) {
 		OAuthRequestFactory::register($class, get_class($this));
@@ -51,7 +62,6 @@ class RequestProxyBase {
  * Get request parameter 
  *
  * @return array
- * @access public
  */
 	public function parameters() {
 	}
@@ -60,7 +70,6 @@ class RequestProxyBase {
  * Get token
  * 
  * @return string
- * @access public
  */
 	public function token() {
 		$params = $this->parameters();
@@ -70,7 +79,6 @@ class RequestProxyBase {
  * Get callback
  *
  * @return string
- * @access public
  */
 	public function callback() {
 		$params = $this->parameters();
@@ -81,7 +89,6 @@ class RequestProxyBase {
  * Get consumer key
  *
  * @return string
- * @access public
  */
 	public function consumerKey() {
 		$params = $this->parameters();
@@ -92,7 +99,6 @@ class RequestProxyBase {
  * Return list of parameters used in signature building
  *
  * @return array
- * @access public
  */
 	public function parametersForSignature() {
 		$params = $this->parameters();
@@ -104,7 +110,6 @@ class RequestProxyBase {
  * Oauth parameters
  *
  * @return array
- * @access public
  */
     public function oauthParameters() {
 		$result = array();
@@ -120,7 +125,6 @@ class RequestProxyBase {
  * Non oauth parameters
  *
  * @return array
- * @access public
  */
     public function nonOauthParameters() {
 		$result = array();
@@ -136,7 +140,6 @@ class RequestProxyBase {
  * Get nonce
  *
  * @return string
- * @access public
  */
 	public function nonce() {
 		$params = $this->parameters();
@@ -147,7 +150,6 @@ class RequestProxyBase {
  * Get timestamp
  *
  * @return string
- * @access public
  */
 	public function timestamp() {
 		$params = $this->parameters();
@@ -158,7 +160,6 @@ class RequestProxyBase {
  * Get verifier
  *
  * @return string
- * @access public
  */
 	public function verifier() {
 		$params = $this->parameters();
@@ -169,7 +170,6 @@ class RequestProxyBase {
  * Get signature method
  *
  * @return string
- * @access public
  */
 	public function signatureMethod() {
 		$params = $this->parameters();
@@ -187,7 +187,6 @@ class RequestProxyBase {
  * Get signature
  *
  * @return string
- * @access public
  */
 	public function signature() {
 		$params = $this->parameters();
@@ -205,10 +204,15 @@ class RequestProxyBase {
  * Return XAuth parameters fetched from header
  *
  * @return string
- * @access public
  */
     public function xAuthParams() {
-		$headers = array('X_AUTH_MODE' => 'x_auth_mode', 'HTTP_X_AUTH_MODE' => 'x_auth_mode', 'X_AUTH_USERNAME' => 'x_auth_username', 'HTTP_X_AUTH_USERNAME' => 'x_auth_username', 'X_AUTH_PASSWORD' => 'x_auth_password', 'HTTP_X_AUTH_PASSWORD' => 'x_auth_password');
+		$headers = array(
+			'X_AUTH_MODE' => 'x_auth_mode',
+			'HTTP_X_AUTH_MODE' => 'x_auth_mode',
+			'X_AUTH_USERNAME' => 'x_auth_username',
+			'HTTP_X_AUTH_USERNAME' => 'x_auth_username',
+			'X_AUTH_PASSWORD' => 'x_auth_password',
+			'HTTP_X_AUTH_PASSWORD' => 'x_auth_password');
 		$results = array();
 		foreach ($headers as $header => $key) {
 			if (empty($results[$key])) {
@@ -225,10 +229,11 @@ class RequestProxyBase {
  * Return parameters fetched from header
  *
  * @return string
- * @access public
  */
     public function headerParams() {
-		$headers = array('X-HTTP_AUTHORIZATION', 'authorization', 'Authorization', 'HTTP_AUTHORIZATION', 'HTTP_HTTP_AUTHORIZATION', 'HTTP_X-HTTP_AUTHORIZATION');
+		$headers = array(
+			'X-HTTP_AUTHORIZATION', 'authorization', 'Authorization', 'HTTP_AUTHORIZATION',
+			'HTTP_HTTP_AUTHORIZATION', 'HTTP_X-HTTP_AUTHORIZATION');
 		$params = apache_request_headers();
 		foreach ($headers as $header) {
 			$header = env($header);
@@ -272,7 +277,6 @@ class RequestProxyBase {
  *
  * @param string $value
  * @return string
- * @access public
  */
 	public function unescape($value) {
 		return OauthHelper::unescape(r('+', '%2B', $value));
@@ -282,7 +286,6 @@ class RequestProxyBase {
  * Get public certificate
  *
  * @return string
- * @access public
  */
 	public function getPublicCertificate() {		
 		return $this->request->getPublicCertificate();
@@ -292,7 +295,6 @@ class RequestProxyBase {
  * Get private certificate
  *
  * @return string
- * @access public
  */
 	public function getPrivateCertificate() {		
 		return $this->request->getPrivateCertificate();
@@ -302,7 +304,6 @@ class RequestProxyBase {
  * By 9.1 in specs
  *
  * @return string
- * @access public
  */
     public function signatureBaseString() {
       $strings = array($this->method(), $this->normalizedUri(), $this->normalizedParameters());
@@ -317,7 +318,6 @@ class RequestProxyBase {
  * By 9.1.2 in specs
  *
  * @return string
- * @access public
  */
 	public function normalizedUri() {
 		return OauthHelper::getBaseUri($this->uri());
@@ -327,7 +327,6 @@ class RequestProxyBase {
  * By 9.1.1. in specs Normalize Request Parameters
  *
  * @return string
- * @access public
  */
 	public function normalizedParameters() {
 		return OauthHelper::normalize($this->parametersForSignature());
@@ -337,7 +336,6 @@ class RequestProxyBase {
  * Sign request using proxy object
  *
  * @return string
- * @access public
  */
 	public function sign($options = array()) {
 		$params = $this->parameters();
@@ -357,7 +355,6 @@ class RequestProxyBase {
  * URI, including OAuth parameters
  *
  * @return string
- * @access public
  */
 	public function signedUri($withOauth = true) {
 		if (!empty($this->signed)) {
@@ -367,16 +364,14 @@ class RequestProxyBase {
 				$params = $this->nonOauthParameters();
 			}
 			return join('?', array($this->uri(), OauthHelper::normalize($params)));
-		} else {
-			return "not signed";
 		}
+		return "not signed";
 	}
 
 /**
  * Authorization header for OAuth
  *
  * @return string
- * @access public
  */
     public function oauthHeader($options = array()) {
 		$headerParams = array();
@@ -391,6 +386,4 @@ class RequestProxyBase {
 		}
 		return "OAuth " . $realm . $headerParamsStr;
     }
-	
 }
-?>

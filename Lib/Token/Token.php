@@ -1,9 +1,21 @@
 <?php
+/**
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
 App::import('Lib', 'OauthLib.OauthHelper');
 
 /**
  * Superclass for the various tokens used by OAuth
+ *
+ * @package oauth_lib
+ * @subpackage oauth_lib.libs.tokens
  */
 class Token {
 
@@ -11,7 +23,6 @@ class Token {
  * Token public key
  *
  * @var string
- * @access public
  */
 	public $token;
 
@@ -19,7 +30,6 @@ class Token {
  * Token secret key
  *
  * @var string
- * @access public
  */
 	public $tokenSecret;
 	
@@ -27,7 +37,6 @@ class Token {
  * Token additional parameter
  *
  * @var mixed
- * @access public
  */
 	public $params;
 
@@ -49,6 +58,7 @@ class Token {
 		$this->tokenSecret = $secret;
 		$this->params = $params;
 	}
+
 /**
  * Http query request string
  *
@@ -58,6 +68,4 @@ class Token {
 	public function toQuery(&$model) {
 		return "oauth_token=" . OauthHelper::escape($this->token) . "&oauth_secret=".OauthHelper::escape($this->tokenSecret);
 	}
-
 }
-?>

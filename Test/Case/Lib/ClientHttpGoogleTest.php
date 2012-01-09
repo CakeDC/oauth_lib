@@ -1,4 +1,13 @@
 <?php
+/**
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
 App::import('Lib', 'OauthLib.ClientHttp');
 App::import('Lib', 'OauthLib.RequestFactory');
@@ -9,9 +18,19 @@ App::import('Lib', 'OauthLib.ConsumerToken');
 App::import('Controller', 'OauthLib.OauthAppController');
 require_once APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests' . DS . 'cases' . DS . 'library' . DS . 'uri.php';
 
+/**
+ * Oauth Test case.
+ *
+ * @package oauth_lib
+ * @subpackage oauth_lib.tests.libs
+ */
+class ClientHttpGoogleTest extends CakeTestCase {
 
-class NetHttpClientGoogleTest extends CakeTestCase {
-
+/**
+ * setup
+ *
+ * @return void
+ */
 	public function setup() {
 		$this->consumer = new Consumer('consumer_key_86cad9', '5888bf0345e5d237');
 		$this->ConsumerToken = new ConsumerToken($this->consumer, 'token_411a7f', '3196ffd991c8ebdb');
@@ -24,10 +43,14 @@ class NetHttpClientGoogleTest extends CakeTestCase {
 		$this->requestUriN = $this->http->parseUri('http://example.com/test?key=value');
 	}
 
+/**
+ * testStepByStepTokenRequest
+ *
+ * @return void
+ */
 	public function testStepByStepTokenRequest() {
 		$this->consumer = new Consumer('weitu.googlepages.com', 'secret');
 		$this->ConsumerToken = new ConsumerToken($this->consumer, 'token_411a7f', '3196ffd991c8ebdb');
-		//$this->model->initConsumer("weitu.googlepages.com", "secret");
 		$requestUri = & new URI('https://www.google.com/accounts/OAuthGetRequestToken?scope=https%3A%2F%2Fwww.google.com%2Fm8%2Ffeeds');
 		$nonce = 'fa95f7d3-8ff0-4dd6-b7f1-49a691ec34ca';
 		$timestamp = time();
@@ -44,18 +67,22 @@ class NetHttpClientGoogleTest extends CakeTestCase {
 		$request = & new ClientHttp($http, $requestUri->path . $requestUri->queryWithQ());
 
 		$signatureBaseString = $request->signatureBaseString($http, $this->consumer, $token, $requestParams);
-	
+
 		$this->assertEqual("GET&https%3A%2F%2Fwww.google.com%2Faccounts%2FOAuthGetRequestToken&oauth_consumer_key%3Dweitu.googlepages.com%26oauth_nonce%3D{$nonce}%26oauth_signature_method%3DRSA-SHA1%26oauth_timestamp%3D{$timestamp}%26oauth_version%3D1.0%26scope%3Dhttps%253A%252F%252Fwww.google.com%252Fm8%252Ffeeds", $signatureBaseString);
 
 		$request->oauth($http, $this->consumer, $token, $requestParams);
 		$this->assertEqual('GET', $request->method);
-		
+
 		$response = $request->request();
 		$this->assertEqual("200", $response['status']['code']);
 		$this->assertEqual("oauth_token=", substr($response['body'], 0, 12));
 	}
 
-
+/**
+ * requestParametersToS
+ *
+ * @return void
+ */
 	protected function requestParametersToS() {
 		$paramList = array();
 		foreach($this->requestParameters as $k => $v) {
@@ -63,10 +90,16 @@ class NetHttpClientGoogleTest extends CakeTestCase {
 		}
 		return implode("&", $paramList);
 	}
+
+/**
+ * sorting
+ *
+ * @param string $data 
+ * @return void
+ */
 	public function sorting($data) {
 		$arr = explode('&', $data);
 		sort($arr);
 		return implode('&', $arr);
 	}
 }
-?>	

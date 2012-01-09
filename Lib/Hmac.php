@@ -1,57 +1,54 @@
 <?php
 /**
- * Implementation of the Hashed Message Authentication Code
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
- /**
- * HMAC class
+/**
+ * Implementation of the Hashed Message Authentication Code
  *
- * Example usage:
- *      $key = str_repeat("\xaa", 20); // insecure key only for example
- *      $data = "Hello World!";
- *      $hmac = new Hmac($key, 'SHA256');
- *      $hmacHash = $hmac->hash($data);
+ * It provides set of methods to use in combine with Cakephp Auth component to authenticate users
+ * with remote auth servers like twitter.com, so users will have transparent authentication later.
  *
- *      Supported hashing algorithms are limited by your PHP version access
- *      to the hash, mhash extensions and supported native functions like
- *      md5() and sha1().
- *
- *      To obtain raw binary output, set the optional second parameter of
- *      Hmac::hash() to Hmac::BINARY.
- *
- *      $hmacRawHash = $hmac->hash($data, Hmac::BINARY);
- *
+ * @package oauth_lib
+ * @subpackage oauth_lib.libs
  */
 class Hmac extends Object {
+
 /**
  * The key to use for the hash
  *
  * @var string
- * @access protected
  */
 	protected $_key = null;
+
 /**
  * pack() format to be used for current hashing method
  *
  * @var string
- * @access protected
  */
 	protected $_packFormat = null;
+
 /**
  * Hashing algorithm; can be the md5/sha1 functions or any algorithm name
  * listed in the output of PHP 5.1.2+ hash_algos().
  *
  * @var string
- * @access protected
  */
 	protected $_hashAlgorithm = 'md5';
+
 /**
  * Supported direct hashing functions in PHP
  *
  * @var array
- * @access protected
  */
 	protected $_supportedHashNativeFunctions = array('md5', 'sha1');
+
 /**
  * List of hash pack formats for each hashing algorithm supported.
  * Only required when hash or mhash are not available, and we are
@@ -60,24 +57,28 @@ class Hmac extends Object {
  * @var array
  */
 	protected $_hashPackFormats = array('md5'=>'H32', 'sha1'=>'H40');
+
 /**
  * List of algorithms supported my mhash()
  *
  * @var array
  */
-	protected $_supportedMhashAlgorithms = array('adler32', ' crc32', 'crc32b', 'gost', 'haval128', 'haval160', 'haval192', 'haval256', 'md4', 'md5', 'ripemd160', 'sha1', 'sha256', 'tiger', 'tiger128', 'tiger160');
+	protected $_supportedMhashAlgorithms = array(
+		'adler32', ' crc32', 'crc32b', 'gost', 'haval128', 'haval160', 'haval192', 'haval256',
+		'md4', 'md5', 'ripemd160', 'sha1', 'sha256', 'tiger', 'tiger128', 'tiger160');
+
 /**
  * Constants representing the output mode of the hash algorithm
  */
 	const STRING = 'string';
 	const BINARY = 'binary';
+
 /**
  * Constructor; optionally set Key and Hash at this point
  *
  * @param string $key
  * @param string $hash
- * @return 
- * @access public
+ * @return
  */
 	public function __construct($key = null, $hash = null) {
 		if (!is_null($key)) {
@@ -87,12 +88,12 @@ class Hmac extends Object {
 			$this->setHashAlgorithm($hash);
 		}
 	}
+
 /**
  * Set the key to use when hashing
  *
  * @param string $key
  * @return OAuthHMAC
- * @access public
  */
 	public function setKey($key) {
 		if (!isset($key) || empty($key)) {
@@ -101,11 +102,11 @@ class Hmac extends Object {
 		$this->_key = $key;
 		return $this;
 	}
+
 /**
  * Getter to return the currently set key
  *
  * @return string
- * @access public
  */
 	public function getKey() {
 		if (is_null($this->_key)) {
@@ -113,6 +114,7 @@ class Hmac extends Object {
 		}
 		return $this->_key;
 	}
+
 /**
  * Setter for the hash method. Supports md5() and sha1() functions, and if
  * available the hashing algorithms supported by the hash() PHP5 function or
@@ -123,7 +125,6 @@ class Hmac extends Object {
  *
  * @param string $hash
  * @return OAuthHMAC
- * @access public
  */
 	public function setHashAlgorithm($hash) {
 		if (!isset($hash) || empty($hash)) {
@@ -147,23 +148,22 @@ class Hmac extends Object {
 		$this->_hashAlgorithm = $hash;
 		return $this;
 	}
+
 /**
  * Return the current hashing algorithm
  *
  * @return string
- * @access public
  */
 	public function getHashAlgorithm() {
 		return $this->_hashAlgorithm;
 	}
-	
+
 /**
  * Perform HMAC and return the keyed data
  *
  * @param string $data
  * @param bool $internal Option to not use hash() functions for testing
  * @return string
- * @access public
  */
 	public function hash($data, $output = self::STRING, $internal = false) {
 		if (function_exists('hash_hmac') && $internal === false) {
@@ -179,17 +179,38 @@ class Hmac extends Object {
 			$bin = mhash($this->_getMhashDefinition($this->getHashAlgorithm()), $data, $this->getKey());
 			return bin2hex($bin);
 		}
-		$key = $this->getKey();
-		$hash = $this->getHashAlgorithm();
-		if (strlen($key) <64) {
-			$key = str_pad($key, 64, chr(0));
-		} elseif (strlen($key) >64) {
-			$key = pack($this->_packFormat, $this->_digest($hash, $key, $output));
-		}
-		$padInner = (substr($key, 0, 64) ^ str_repeat(chr(0x36), 64));
-		$padOuter = (substr($key, 0, 64) ^ str_repeat(chr(0x5C), 64));
-		return $this->_digest($hash, $padOuter . pack($this->_packFormat, $this->_digest($hash, $padInner . $data, $output)), $output);
+		
+		return $this->_hmacfn($this->getHashAlgorithm(), $this->getKey(), $data, $output);
 	}
+
+/**
+ * Another implementation for for hmac.
+ * @link http://www.php.net/manual/en/function.sha1.php#39492
+ *
+ * @param string $hashfunc
+ * @param string $key
+ * @param string $data
+ * @param string $output
+ */ 
+	protected function _hmacfn($hashfunc, $key, $data, $output) {
+		$blocksize = 64;
+		if (strlen($key) > $blocksize) {
+			$key = pack($this->_packFormat, $hashfunc($key));
+		}
+		$key = str_pad($key, $blocksize, chr(0x00));
+		$ipad = str_repeat(chr(0x36),$blocksize);
+		$opad = str_repeat(chr(0x5c),$blocksize);
+		$hmac = pack($this->_packFormat,$hashfunc(
+						($key ^ $opad) . pack(
+							$this->_packFormat, $hashfunc(
+								($key ^ $ipad) . $data))));
+		if ($output == self::BINARY) {	
+			return $hmac;
+		}
+		return bin2hex($hmac);
+	}
+		
+	
 /**
  * Method of working around the inability to use mhash constants; this
  * will locate the Constant value of any support Hashing algorithm named
@@ -197,7 +218,6 @@ class Hmac extends Object {
  *
  * @param string $hashAlgorithm
  * @return integer
- * @access protected
  */
 	protected function _getMhashDefinition($hashAlgorithm) {
 		for ($i = 0;$i <= mhash_count();$i++) {
@@ -205,6 +225,7 @@ class Hmac extends Object {
 		}
 		return $types[strtoupper($hashAlgorithm) ];
 	}
+
 /**
  * Digest method when using native functions which allows the selection
  * of raw binary output.
@@ -213,7 +234,6 @@ class Hmac extends Object {
  * @param string $key
  * @param string $mode
  * @return string
- * @access protected
  */
 	protected function _digest($hash, $key, $mode) {
 		if ($mode == self::BINARY) {
