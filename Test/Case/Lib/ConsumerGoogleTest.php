@@ -9,12 +9,13 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('RequestFactory', 'OauthLib.Lib');
 require_once(CakePlugin::path('OauthLib') . 'Test' . DS . 'Case' . DS . 'Library' . DS . 'Uri.php');
+App::uses('RequestFactory', 'OauthLib.Lib');
 App::uses('Consumer', 'OauthLib.Lib');
 App::uses('Signature', 'OauthLib.Lib');
 App::uses('ConsumerToken', 'OauthLib.Token');
 App::uses('ClientHttp', 'OauthLib.Lib');
+App::uses('File', 'Utility');
 
 /**
  * Oauth Tests
@@ -130,8 +131,8 @@ class ConsumerGoogleTest extends CakeTestCase {
 	        'oauth_signature_method' => 'RSA-SHA1',
 	        'http_method' => 'GET',
 	        );
-		$privateFile = new File(APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests' . DS . 'fixtures' . DS . 'certificates' . DS . 'termie.pem');
-		$publicFile = new File(APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests' . DS . 'fixtures' . DS . 'certificates' . DS . 'termie.cer');
+		$privateFile = new File(APP . 'Plugin' . DS . 'OauthLib' . DS . 'Test' . DS . 'Fixture' . DS . 'Certificate' . DS . 'termie.pem');
+		$publicFile = new File(APP . 'Plugin' . DS . 'OauthLib' . DS . 'Test' . DS . 'Fixture' . DS . 'Certificate' . DS . 'termie.cer');
 		$consumerConfig['rsa_private']     = $privateFile->read();
 		$consumerConfig['rsa_certificate'] = $publicFile->read();
 		$this->consumer = new Consumer("weitu.googlepages.com", "secret", $consumerConfig);

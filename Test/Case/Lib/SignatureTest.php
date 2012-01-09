@@ -110,9 +110,9 @@ class OAuthSignatureRsaSHA1Test extends CakeTestCase {
  */
 	public function setup() {
 		App::import('Core', 'File');
-		$file = new File(APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests' . DS . 'fixtures' . DS . 'certificates' . DS . 'termie.pem');
+		$file = new File(CakePlugin::path('OauthLib') . 'Test' . DS . 'Fixture' . DS . 'Certificate' . DS . 'termie.pem');
 		$this->pem = $file->read();
-		$cert = new File(APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests' . DS . 'fixtures' . DS . 'certificates' . DS . 'termie.cer');
+		$cert = new File(CakePlugin::path('OauthLib') . 'Test' . DS . 'Fixture' . DS . 'Certificate' . DS . 'termie.cer');
 		$this->cert = $cert->read();
 		$this->consumer = new Consumer('dpf43f3p2l4k3l03', $this->pem,
 			array());

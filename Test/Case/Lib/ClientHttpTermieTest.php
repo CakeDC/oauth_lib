@@ -15,6 +15,7 @@ App::uses('Consumer', 'OauthLib.Lib');
 App::uses('ConsumerToken', 'OauthLib.Token');
 App::uses('RequestProxyController', 'OauthLib.RequestProxy');
 App::uses('OauthAppController', 'OauthLib.Controller');
+App::uses('File', 'Utility');
 require_once(CakePlugin::path('OauthLib') . 'Test' . DS . 'Case' . DS . 'Library' . DS . 'Uri.php');
 
 /**

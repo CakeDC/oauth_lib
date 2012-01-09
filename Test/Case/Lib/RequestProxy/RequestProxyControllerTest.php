@@ -84,8 +84,8 @@ class RequestProxyControllerTest extends CakeTestCase {
  */
 	protected function _getRequestProxy($parameters, $options = array()) {
 		$request = & new OauthLibAppController();
-		$request->data = $parameters;
-		$request->params['url'] = array('url' => '/', 'ext' => 'html');
+		$request->request->data = $parameters;
+		$request->request->params['url'] = array('url' => '/', 'ext' => 'html');
 	    $_ENV['CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
 		$_ENV['Authorization'] = null;
 		return RequestFactory::proxy($request, $options);
