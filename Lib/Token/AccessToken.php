@@ -9,8 +9,8 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Lib', 'OauthLib.OauthHelper');
-App::import('Lib', 'OauthLib.ConsumerToken');
+App::uses('OauthHelper', 'OauthLib.Lib');
+App::uses('ConsumerToken', 'OauthLib.Token');
 
 /**
  * The Access Token is used for the actual "real" web service calls thatyou perform against the server

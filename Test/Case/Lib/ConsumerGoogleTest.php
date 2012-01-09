@@ -9,12 +9,12 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Lib', 'OauthLib.RequestFactory');
-require_once APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests' . DS . 'cases' . DS . 'library' . DS . 'uri.php';
-App::import('Lib', 'OauthLib.Consumer');
-App::import('Lib', 'OauthLib.Signature');
-App::import('Lib', 'OauthLib.ConsumerToken');
-App::import('Lib', 'OauthLib.ClientHttp');
+App::uses('RequestFactory', 'OauthLib.Lib');
+require_once(CakePlugin::path('OauthLib') . 'Test' . DS . 'Case' . DS . 'Library' . DS . 'Uri.php');
+App::uses('Consumer', 'OauthLib.Lib');
+App::uses('Signature', 'OauthLib.Lib');
+App::uses('ConsumerToken', 'OauthLib.Token');
+App::uses('ClientHttp', 'OauthLib.Lib');
 
 /**
  * Oauth Tests

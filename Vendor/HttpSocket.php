@@ -17,7 +17,10 @@
  * @package		  oauth_lib
  * @subpackage	  oauth_lib.vendors
  */
-App::import('Core', array('CakeSocket', 'Set', 'Router'));
+
+App::uses('CakeSocket', 'Network');
+App::uses('Set', 'Utility');
+App::uses('Router', 'Routing');
 
 /**
  * Cake network socket connection class.

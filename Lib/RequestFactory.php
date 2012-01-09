@@ -75,14 +75,14 @@ class RequestFactory {
 }
 
 if (!class_exists('RequestProxyBase')) {
-	App::import('Lib', 'OauthLib.RequestProxyBase');
+	App::uses('RequestProxyBase', 'OauthLib.RequestProxy');
 }
 if (!class_exists('RequestProxyController')) {
-	App::import('Lib', 'OauthLib.RequestProxyController');
+	App::uses('RequestProxyController', 'OauthLib.RequestProxy');
 }
 if (!class_exists('RequestProxyHttp')) {
-	App::import('Lib', 'OauthLib.RequestProxyHttp');
+	App::uses('RequestProxyHttp', 'OauthLib.RequestProxy');
 }
 if (!class_exists('RequestProxyMock')) {
-	App::import('Lib', 'OauthLib.RequestProxyMock');
+	App::uses('RequestProxyMock', 'OauthLib.RequestProxy');
 }

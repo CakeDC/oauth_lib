@@ -9,9 +9,9 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Lib', 'OauthLib.RequestFactory');
-App::import('Lib', 'OauthLib.RequestProxyController');
-App::import('Controller', 'OauthLib.OauthLibAppController');
+App::uses('RequestFactory', 'OauthLib.Lib');
+App::uses('RequestProxyController', 'OauthLib.RequestProxy');
+App::uses('OauthLibAppController', 'OauthLib.Controller');
 
 /**
  * RequestProxyControllerTest
@@ -46,7 +46,6 @@ class RequestProxyControllerTest extends CakeTestCase {
  * @return void
  */
 	public function testParametersParsed() {
-		App::import('Controller', 'AppController');
 		$request = & new OauthLibAppController();
 		$request->params['url'] = array('test' => 'data');
 		$requestProxyController = & new RequestProxyController($request);

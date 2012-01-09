@@ -10,13 +10,13 @@
  */
 
 if (!class_exists('Hmac')) {
-	App::import('Lib', 'OauthLib.Hmac');
+	App::uses('Hmac', 'OauthLib.Lib');
 }
 if (!class_exists('RequestFactory')) {
-	App::import('Lib', 'OauthLib.RequestFactory');
+	App::uses('RequestFactory', 'OauthLib.Lib');
 }
 if (!class_exists('OauthHelper')) {
-	App::import('Lib', 'OauthLib.OauthHelper');
+	App::uses('OauthHelper', 'OauthLib.Lib');
 }
 
 /**

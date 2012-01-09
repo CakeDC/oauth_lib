@@ -9,10 +9,10 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
  
-App::import('Lib', 'OauthLib.OauthHelper');
-App::import('Lib', 'OauthLib.Consumer');
-App::import('Lib', 'OauthLib.RequestToken');
-App::import('Lib', 'OauthLib.RequestFactory');
+App::uses('OauthHelper', 'OauthLib.Lib')
+App::uses('Consumer', 'OauthLib.Lib')
+App::uses('RequestToken', 'OauthLib.Lib')
+App::uses('RequestFactory', 'OauthLib.Lib')
 
 /**
  * Oauth shell allow to perform authorize, sign, query signed data and perform xauth operations.
@@ -358,8 +358,8 @@ class OauthShell extends Shell {
 		$params = $this->__joinParams($this->__prepareParams(false));
 
 		if (!class_exists('HttpSocket')) {
-			//App::import('Core', 'HttpSocket');
-			App::import('Vendor', 'OauthLib.HttpSocket');
+			//App::uses('HttpSocket', 'Network');
+			App::uses('HttpSocket', 'OauthLib.Vendor');
 		}
 		$socket = & new HttpSocket();
 		$uri = $socket->parseUri($this->options['uri']);

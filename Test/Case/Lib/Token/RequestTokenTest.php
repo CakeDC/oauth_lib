@@ -9,8 +9,8 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Lib', 'OauthLib.RequestToken');
-App::import('Lib', 'OauthLib.Consumer');
+App::uses('RequestToken', 'OauthLib.Token');
+App::uses('Consumer', 'OauthLib.Lib');
 
 /**
  * Oauth Tests

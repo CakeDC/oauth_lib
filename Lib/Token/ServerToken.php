@@ -9,7 +9,7 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Lib', 'OauthLib.OauthHelper');
+App::uses('OauthHelper', 'OauthLib.Lib');
 App::import('Behavior', 'OauthLib.TokenBehavior');
 
 /**

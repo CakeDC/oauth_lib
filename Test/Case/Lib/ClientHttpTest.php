@@ -9,16 +9,15 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Lib', 'OauthLib.ClientHttp');
-App::import('Vendor', 'OauthLib.HttpSocket');
-App::import('Lib', 'OauthLib.RequestFactory');
-App::import('Lib', 'OauthLib.RequestProxyController');
-App::import('Lib', 'OauthLib.Consumer');
-App::import('Lib', 'OauthLib.ConsumerToken');
-App::import('Controller', 'OauthLib.OauthAppController');
-require_once APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests' . DS . 'cases' . DS . 'library' . DS . 'uri.php';
-
-App::import('File', 'OauthTestCase', true, array(APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests'), 'oauth_test_case.php');
+App::uses('ClientHttp', 'OauthLib.Lib');
+App::uses('HttpSocket', 'OauthLib.Vendor');
+App::uses('RequestFactory', 'OauthLib.Lib');
+App::uses('RequestProxyController', 'OauthLib.RequestProxy');
+App::uses('Consumer', 'OauthLib.Lib');
+App::uses('ConsumerToken', 'OauthLib.Token');
+App::uses('OauthLibAppController', 'OauthLib.Controller');
+require_once(CakePlugin::path('OauthLib') . 'Test' . DS . 'Case' . DS . 'Library' . DS . 'Uri.php');
+require_once(CakePlugin::path('OauthLib') . 'Test' . DS . 'OauthTestCase.php');
 
 /**
  * Oauth Tests

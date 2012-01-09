@@ -10,18 +10,18 @@
  */
 
 if (!class_exists('Signature')) {
-	App::import('Lib', 'OauthLib.Signature');
-}if (!class_exists('RequestProxyController')) {
-	App::import('Lib', 'OauthLib.RequestProxyController');
+	App::uses('Signature', 'OauthLib.Lib');
+} if (!class_exists('RequestProxyController')) {
+	App::uses('RequestProxyController', 'OauthLib.Requestproxy');
 }
 if (!class_exists('OauthHelper')) {
-	App::import('Lib', 'OauthLib.OauthHelper');
+	App::uses('OauthHelper', 'OauthLib.Lib');
 }
 if (!class_exists('RequestFactory')) {
-	App::import('Lib', 'OauthLib.RequestFactory');
+	App::uses('RequestFactory', 'OauthLib.Lib');
 }
 if (!class_exists('ClientHttp')) {
-	App::import('Lib', 'OauthLib.ClientHttp');
+	App::uses('ClientHttp', 'OauthLib.Lib');
 }
 
 /**

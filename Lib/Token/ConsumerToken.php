@@ -9,9 +9,9 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Lib', 'OauthLib.OauthHelper');
-App::import('Lib', 'OauthLib.ClientHttp');
-App::import('Lib', 'OauthLib.Token');
+App::uses('OauthHelper', 'OauthLib.Lib');
+App::uses('ClientHttp', 'OauthLib.Lib');
+App::uses('Token', 'OauthLib.Token');
 
 /**
  * Consumer oauth token used to perform signing and requesting info from oauth server

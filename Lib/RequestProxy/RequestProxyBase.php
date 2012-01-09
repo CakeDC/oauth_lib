@@ -279,7 +279,7 @@ class RequestProxyBase {
  * @return string
  */
 	public function unescape($value) {
-		return OauthHelper::unescape(r('+', '%2B', $value));
+		return OauthHelper::unescape(str_replace('+', '%2B', $value));
 	}
 
 /**

@@ -9,14 +9,15 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Lib', 'OauthLib.ClientHttp');
-App::import('Lib', 'OauthLib.RequestFactory');
-App::import('Lib', 'OauthLib.RequestProxyController');
-App::import('Lib', 'OauthLib.Consumer');
-App::import('Lib', 'OauthLib.Signature');
-App::import('Lib', 'OauthLib.ConsumerToken');
-App::import('Controller', 'OauthLib.OauthAppController');
-require_once APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests' . DS . 'cases' . DS . 'library' . DS . 'uri.php';
+App::uses('ClientHttp', 'OauthLib.Lib');
+App::uses('RequestFactory', 'OauthLib.Lib');
+App::uses('RequestProxyController', 'OauthLib.RequestProxy');
+App::uses('Consumer', 'OauthLib.Lib');
+App::uses('Signature', 'OauthLib.Lib');
+App::uses('ConsumerToken', 'OauthLib.Token');
+App::uses('OauthAppController', 'OauthLib.Controller');
+App::uses('File', 'Utility');
+require_once(CakePlugin::path('OauthLib') . 'Test' . DS . 'Case' . DS . 'Library' . DS . 'Uri.php');
 
 /**
  * Oauth Test case.
@@ -57,10 +58,10 @@ class ClientHttpGoogleTest extends CakeTestCase {
 		$config = array('host' => 'www.google.com', 'scheme'  => 'https', 'request' => array('uri' => array('scheme'  => 'https', 'host' => 'www.google.com')));
 		$http = new HttpSocket($config);
 		$token = null;
-		
+
 		$requestParams = array('scheme'  =>  'header', 'nonce'  =>  $nonce, 'timestamp'  =>  $timestamp, 'signature_method'  => 'RSA-SHA1', 'parameters' =>  array( 'scope' => 'https://www.google.com/m8/feeds'));
-		$privateFile = new File(APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests' . DS . 'fixtures' . DS . 'certificates' . DS . 'termie.pem');
-		$publicFile = new File(APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests' . DS . 'fixtures' . DS . 'certificates' . DS . 'termie.cer');
+		$privateFile = new File(APP . 'Plugin' . DS . 'OauthLib' . DS . 'Test' . DS . 'Fixture' . DS . 'Certificate' . DS . 'termie.pem');
+		$publicFile = new File(APP . 'Plugin' . DS . 'OauthLib' . DS . 'Test' . DS . 'Fixture' . DS . 'Certificate' . DS . 'termie.cer');
 		$requestParams['privateCert'] = $privateFile->read();
 		$requestParams['privateCertPass'] = '';
 		$requestParams['publicCert'] = $publicFile->read();

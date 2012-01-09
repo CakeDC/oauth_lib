@@ -10,10 +10,11 @@
  */
 
 if (!class_exists('HttpSocket')) {
-	App::import('Vendor', 'OauthLib.HttpSocket');
+	App::uses('HttpSocket', 'OauthLib.Vendor');
 }
-App::import('CakeLog');
-App::import('Lib', 'OauthLib.Exceptions');
+
+App::uses('CakeLog', 'Log');
+App::uses('Exceptions', 'OauthLib.Lib');
 
 /**
  * Oauth helper library contain widespread used methods.
@@ -265,8 +266,7 @@ class OauthHelper {
  */
 	public function getBaseUri($url) {
 		if (!class_exists('HttpSocket')) {
-			//App::import('Core', 'HttpSocket');
-			App::import('Vendor', 'OauthLib.HttpSocket');
+			App::uses('HttpSocket', 'OauthLib.Vendor');
 		}
 		$socket = & new HttpSocket();
 		$url = $socket->parseUri($url);

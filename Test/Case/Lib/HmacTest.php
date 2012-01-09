@@ -9,7 +9,7 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Lib', 'OauthLib.Hmac');
+App::uses('Hmac', 'OauthLib.Lib');
 /**
  * Oauth Tests
  *

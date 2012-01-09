@@ -9,9 +9,9 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Lib', 'OauthLib.OauthHelper');
-App::import('Lib', 'OauthLib.ConsumerToken');
-App::import('Lib', 'OauthLib.AccessToken');
+App::uses('OauthHelper', 'OauthLib.Lib');
+App::uses('ConsumerToken', 'OauthLib.Token');
+App::uses('AccessToken', 'OauthLib.Token');
 
 /**
  * The RequestToken is used for the initial Request.

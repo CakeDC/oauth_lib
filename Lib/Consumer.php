@@ -10,14 +10,14 @@
  */
 
 if (!class_exists('HttpSocket')) {
-	App::import('Vendor', 'OauthLib.HttpSocket');
+	App::uses('HttpSocket', 'OauthLib.Vendor');
 }
 
 App::import('Model', 'OauthLib.Socket');
-App::import('Lib', 'OauthLib.ClientHttp');
-App::import('Lib', 'OauthLib.OauthHelper');
-App::import('Lib', 'OauthLib.AccessToken');
-App::import('Lib', 'OauthLib.RequestToken');
+App::uses('ClientHttp', 'OauthLib.Lib');
+App::uses('OauthHelper', 'OauthLib.Lib');
+App::uses('AccessToken', 'OauthLib.Token');
+App::uses('RequestToken', 'OauthLib.Token');
 
 /**
  * FailRequestException

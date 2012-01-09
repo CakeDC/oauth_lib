@@ -9,9 +9,9 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Lib', 'OauthLib.RequestFactory');
-App::import('Lib', 'OauthLib.RequestProxyController');
-App::import('Lib', 'OauthLib.ClientHttp');
+App::uses('RequestFactory', 'OauthLib.Lib');
+App::uses('RequestProxyController', 'OauthLib.RequestProxy');
+App::uses('ClientHttp', 'OauthLib.Lib');
 
 /**
  * RequestProxyHttpTest

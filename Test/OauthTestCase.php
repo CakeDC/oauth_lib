@@ -9,7 +9,7 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-SimpleTest::ignore('OauthTestCase');
+//SimpleTest::ignore('OauthTestCase');
 
 /**
  * Oauth Test case.
@@ -65,7 +65,7 @@ class OauthTestCase extends CakeTestCase {
  * @return Request Object
  */
 	public function request($params = array(), $method = 'GET', $uri = "http://photos.example.net/photos") {
-		App::import('Lib', 'OauthLib.RequestFactory');
+		App::uses('RequestFactory', 'OauthLib.Lib');
 		return RequestFactory::proxy(new MockObject(array('parameters' => $params, 'method' => $method, 'uri' => $uri)));
 	}
 }

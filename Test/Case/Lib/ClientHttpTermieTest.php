@@ -9,13 +9,13 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Lib', 'OauthLib.ClientHttp');
-App::import('Lib', 'OauthLib.RequestFactory');
-App::import('Lib', 'OauthLib.Consumer');
-App::import('Lib', 'OauthLib.ConsumerToken');
-App::import('Lib', 'OauthLib.RequestProxyController');
-App::import('Controller', 'OauthLib.OauthAppController');
-require_once APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests' . DS . 'cases' . DS . 'library' . DS . 'uri.php';
+App::uses('ClientHttp', 'OauthLib.Lib');
+App::uses('RequestFactory', 'OauthLib.Lib');
+App::uses('Consumer', 'OauthLib.Lib');
+App::uses('ConsumerToken', 'OauthLib.Token');
+App::uses('RequestProxyController', 'OauthLib.RequestProxy');
+App::uses('OauthAppController', 'OauthLib.Controller');
+require_once(CakePlugin::path('OauthLib') . 'Test' . DS . 'Case' . DS . 'Library' . DS . 'Uri.php');
 
 /**
  * Oauth Tests
@@ -127,8 +127,10 @@ class ClientHttpTermieTest extends CakeTestCase {
 		$token = null;
 		
 		$requestParams = array('scheme'  =>  'query_string', 'nonce'  =>  $nonce, 'timestamp'  =>  $timestamp, 'signature_method'  => $signatureMethod);
-		$privateFile = new File(APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests' . DS . 'fixtures' . DS . 'certificates' . DS . 'termie.pem');
-		$publicFile = new File(APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests' . DS . 'fixtures' . DS . 'certificates' . DS . 'termie.cer');
+
+		$privateFile = new File(APP . 'Plugin' . DS . 'OauthLib' . DS . 'Test' . DS . 'Fixture' . DS . 'Certificate' . DS . 'termie.pem');
+		$publicFile = new File(APP . 'Plugin' . DS . 'OauthLib' . DS . 'Test' . DS . 'Fixture' . DS . 'Certificate' . DS . 'termie.cer');
+		
 		$requestParams['privateCert'] = $privateFile->read();
 		$requestParams['publicCert'] = $publicFile->read();
 		$requestParams['privateCertPass']      = '';

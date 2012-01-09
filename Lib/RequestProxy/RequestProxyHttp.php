@@ -10,11 +10,10 @@
  */
 
 if (!class_exists('HttpSocket')) {
-	//App::import('Core', 'HttpSocket');
-	App::import('Vendor', 'OauthLib.HttpSocket');
+	App::uses('HttpSocket', 'OauthLib.Vendor');
 }
 if (!class_exists('ClientHttp')) {
-	App::import('Lib', 'OauthLib.ClientHttp');
+	App::uses('ClientHttp', 'OauthLib.Lib');
 }
 RequestFactory::register('ClientHttp', 'RequestProxyHttp');
 

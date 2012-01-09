@@ -9,7 +9,7 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('File', 'OauthTestCase', true, array(APP . 'plugins' . DS . 'oauth_lib' . DS . 'tests'), 'oauth_test_case.php');
+require_once(CakePlugin::path('OauthLib') . 'Test' . DS . 'OauthTestCase.php');
 
 /**
  * Testing specification on Normalize Request Parameters
