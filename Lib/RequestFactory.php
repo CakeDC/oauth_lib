@@ -9,6 +9,28 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+if (!class_exists('RequestProxyBase')) {
+	// App::uses('RequestProxyBase', 'OauthLib.Lib/RequestProxy');
+	// App::import('Lib', 'OauthLib.RequestProxy/RequestProxyBase');
+	include_once(dirname(__FILE__) . DS . 'RequestProxy' . DS . 'RequestProxyBase.php'  );
+}
+if (!class_exists('RequestProxyController')) {
+	// App::uses('RequestProxyController', 'OauthLib.Lib/RequestProxy');
+	// App::import('Lib', 'OauthLib.RequestProxy/RequestProxyController');
+	include_once(dirname(__FILE__) . DS . 'RequestProxy' . DS . 'RequestProxyController.php'  );
+}
+if (!class_exists('RequestProxyHttp')) {
+	// App::uses('RequestProxyHttp', 'OauthLib.Lib/RequestProxy');
+	// App::import('Lib', 'OauthLib.RequestProxy/RequestProxy');
+	include_once(dirname(__FILE__) . DS . 'RequestProxy' . DS . 'RequestProxyHttp.php'  );
+}
+if (!class_exists('RequestProxyMock')) {
+	// App::uses('RequestProxyMock', 'OauthLib.Lib/RequestProxy');
+	// App::import('Lib', 'OauthLib.RequestProxy/RequestProxy');
+	include_once(dirname(__FILE__) . DS . 'RequestProxy' . DS . 'RequestProxyMock.php'  );
+}
+
+
 /**
  * Request factory used to proxy requests to real object that provide request info.
  *
@@ -69,20 +91,8 @@ class RequestFactory {
 				return new $proxyClass($request, $options);
 			}
 		}
+
 		throw new Exception("UnknownRequestType " . get_class($request));
 		return false;
 	}
-}
-
-if (!class_exists('RequestProxyBase')) {
-	App::uses('RequestProxyBase', 'OauthLib.RequestProxy');
-}
-if (!class_exists('RequestProxyController')) {
-	App::uses('RequestProxyController', 'OauthLib.RequestProxy');
-}
-if (!class_exists('RequestProxyHttp')) {
-	App::uses('RequestProxyHttp', 'OauthLib.RequestProxy');
-}
-if (!class_exists('RequestProxyMock')) {
-	App::uses('RequestProxyMock', 'OauthLib.RequestProxy');
 }

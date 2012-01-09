@@ -9,9 +9,9 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('RequestFactory', 'OauthLib.Lib');
 App::uses('ClientHttp', 'OauthLib.Lib');
 App::uses('HttpSocket', 'OauthLib.Vendor');
-App::uses('RequestFactory', 'OauthLib.Lib');
 App::uses('RequestProxyController', 'OauthLib.RequestProxy');
 App::uses('Consumer', 'OauthLib.Lib');
 App::uses('ConsumerToken', 'OauthLib.Token');
@@ -50,7 +50,7 @@ class ClientHttpTest extends OauthTestCase {
  * @return void
  */
 	public function testThatUsingAuthHeadersOnGetRequestsWorks() {
-		$request = & new ClientHttp($this->http, $this->requestUriN['path'] . "?" . $this-> requestParametersToS());
+		$request = & new ClientHttp($this->http, $this->requestUriN['path'] . "?" . $this->requestParametersToS());
 		$request->oauth($this->http, $this->consumer, $this->ConsumerToken, array('nonce' => $this->nonce, 'timestamp' => $this->timestamp));
 		$this->assertEqual('GET', $request->method);
 		$this->assertEqual('/test?key=value', $request->localPath());

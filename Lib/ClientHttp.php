@@ -399,7 +399,6 @@ class ClientHttp {
 		}
 
 		$this->sock->config['request']['uri']['host'] = $request->sockUri->config['host'];
-		//$this->sock->config['request']['uri']['port'] = $request->sockUri->config['port'];
 		if (isset($request->sockUri->config['scheme'])) {
 			$this->sock->config['request']['uri']['scheme'] = $request->sockUri->config['scheme'];
 		}
@@ -422,6 +421,7 @@ class ClientHttp {
 		if (empty($body) && (in_array($request->method, array('POST', 'PUT')))) {
 			$query['header']['Content-Length'] = 0; 
 		}
+
 		OauthHelper::log(array('socket::query' => $query));
 		$response = $this->sock->request($query);
 		OauthHelper::log(array('socket::response' => $this->sock->response));
