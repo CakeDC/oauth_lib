@@ -28,18 +28,18 @@
  */
 
 if (!class_exists('Signature')) {
-	App::import('Lib', 'OauthLib.Signature');
+	App::uses('Signature', 'OauthLib.Lib');
 }if (!class_exists('RequestProxyController')) {
-	App::import('Lib', 'OauthLib.RequestProxyController');
+	App::uses('RequestProxyController', 'OauthLib.Lib');
 }
 if (!class_exists('OauthHelper')) {
-	App::import('Lib', 'OauthLib.OauthHelper');
+	App::uses('OauthHelper', 'OauthLib.Lib');
 }
 if (!class_exists('RequestFactory')) {
-	App::import('Lib', 'OauthLib.RequestFactory');
+	App::uses('RequestFactory', 'OauthLib.Lib');
 }
 if (!class_exists('ClientHttp')) {
-	App::import('Lib', 'OauthLib.ClientHttp');
+	App::uses('ClientHttp', 'OauthLib.Lib');
 }
 
 class OauthLibAppController extends AppController {
@@ -178,13 +178,13 @@ class OauthLibAppController extends AppController {
  */
 	public function configureOAuth($consumer = null, $token = null, $options = array()) {
 		$this->default = array( 'consumer' => $consumer,
-			   'token' => $token,
-			   'scheme' => 'header',
-			   'signature_method' => null,
-			   'nonce' => null,
-			   'timestamp' => null);
+			'token' => $token,
+			'scheme' => 'header',
+			'signature_method' => null,
+			'nonce' => null,
+			'timestamp' => null);
 		$this->options = array_merge($this->default, $options);
-    }
+	}
 
 /**
  * Signing oauth request
@@ -223,11 +223,11 @@ class OauthLibAppController extends AppController {
  * @return boolean
  * @access public
  */
-	function setOAuthParameters() {
+	public function setOAuthParameters() {
 		$this->queryParameters = $this->oauthHelper->parametersWithOauth();
 		$this->queryParameters = array_merge($this->queryParameters, array('oauth_signature' => $this->oauthHelper->signature()));
 		return $this->queryParameters;
-    }
+	}
 
 /**
  * Not implemented!
