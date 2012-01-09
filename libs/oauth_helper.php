@@ -1,26 +1,42 @@
 <?php
+/**
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
 if (!class_exists('HttpSocket')) {
-	//App::import('Core', 'HttpSocket');
 	App::import('Vendor', 'OauthLib.HttpSocket');
 }
 App::import('CakeLog');
 App::import('Lib', 'OauthLib.Exceptions');
 
+/**
+ * Oauth helper library contain widespread used methods.
+ *
+ * @package oauth_lib
+ * @subpackage oauth_lib.libs
+ */
 class OauthHelper {
+
 /**
  *	List of parameters that described by oauth specification
  *
  * @var array
- * @access public
  */
-	public static $parameters = array('oauth_callback', 'oauth_consumer_key', 'oauth_token', 'oauth_signature_method', 'oauth_timestamp', 'oauth_nonce', 'oauth_verifier', 'oauth_version', 'oauth_signature');
+	public static $parameters = array(
+		'oauth_callback', 'oauth_consumer_key', 'oauth_token', 'oauth_signature_method',
+		'oauth_timestamp', 'oauth_nonce', 'oauth_verifier', 'oauth_version', 'oauth_signature');
+
 /**
  * Large random number generator
  *
  * @param integer $powerOfTwo
  * @return string
- * @access public
  */
 	public function random($powerOfTwo) {
 		$prefix = 'P';
@@ -35,13 +51,13 @@ class OauthHelper {
 		}
 		return $prefix . rand(0, pow(2, $powerOfTwo));
     }
+
 /**
  * Generate BC based random number
  *
  * @param integer $min
  * @param integer $max
  * @return string
- * @access public
  */
 	function bcrandom($min, $max) {
 		bcscale(0);
@@ -80,12 +96,12 @@ class OauthHelper {
 		}
 		return bcadd($rand, $min);
 	}
+
 /**
  * Map list of parameters to url
  *
  * @param integer $size
  * @return string
- * @access public
  */
 	public function mapper($params, $separator, $quote = '"') {
 		$paramList = array();
@@ -94,12 +110,12 @@ class OauthHelper {
 		}
 		return implode($separator, $paramList);
 	}
+
 /**
  * Escape list of parameters 
  *
  * @param mixed $value
  * @return string
- * @access public
  */
 	public function escape($value) {
 		if ($value === false) {
@@ -118,7 +134,6 @@ class OauthHelper {
  *
  * @param integer $size
  * @return string
- * @access public
  */
 	public function generateKey($size = 32) {
 		$randomBytes = '';
@@ -128,12 +143,12 @@ class OauthHelper {
 		$code = base64_encode($randomBytes);
 		return ereg_replace('[^a-zA-Z0-9]', '', $code);
 	}
+
 /**
  * Encode a string according to the RFC3986
  *
  * @param string $s
  * @return string
- * @access public
  */
 	public function urlencode($s) {
 		if ($s === false) {
@@ -142,13 +157,13 @@ class OauthHelper {
 			return str_replace('%7E', '~', rawurlencode($s));
 		}
 	}
+
 /**
  * Decode a string according to RFC3986.
  * Also correctly decodes RFC1738 urls.
  *
  * @param string $s
  * @return string
- * @access public
  */
 	public function urldecode($s) {
 		if ($s === false) {
@@ -157,6 +172,7 @@ class OauthHelper {
 			return rawurldecode($s);
 		}
 	}
+
 /**
  * urltranscode - make sure that a value is encoded using RFC3986.
  * We use a basic urldecode() function so that any use of '+' as the
@@ -164,7 +180,6 @@ class OauthHelper {
  *
  * @param string $s
  * @return string
- * @access public
  */
 	public function urltranscode($s) {
 		if ($s === false) {
@@ -173,16 +188,18 @@ class OauthHelper {
 			return $this->urlencode(urldecode($s));
 		}
 	}
+
 /**
  * Internal oauth logging method
  *
  * @param mixed $msg, message to log
  * @param string $typ, type of log
  * @return bool log write result
- * @access public
  */	
 	public function log($msg, $typ = 'oauth') {
-		//return true;
+		if (Configure::read('debug') == 0) {
+			return true;
+		}
 		if (!class_exists('CakeLog')) {
 			uses('cake_log');
 		}
@@ -204,12 +221,12 @@ class OauthHelper {
 		}
 		return $log->write($typ, env('HTTP_HOST') . ": object($obj) file($file) line($line) function($function) \n" . $msg);
 	}
+
 /**
  * Get one of preset regex
  *
  * @param string $name: patternAlpha, patternAlnum, patternHex, patternEscaped, patternUnreserved, patternReserved
  * @return mixed
- * @access public
  */
 	public static function regex($name) {
 		$patternAlpha = "a-zA-Z";
@@ -225,11 +242,12 @@ class OauthHelper {
 		}
 		return false;
 	}
+
 /**
+ * Unescape
  *
  * @param string $str
  * @return string
- * @access public
  */
 	public function unescape($str) {
 		$escaped = OauthHelper::regex('Escaped');
@@ -238,12 +256,12 @@ class OauthHelper {
 		}
 		return $str;
 	}
+
 /**
  * get base URI by given url
  *
  * @param string $url
  * @return string
- * @access public 
  */
 	public function getBaseUri($url) {
 		if (!class_exists('HttpSocket')) {
@@ -258,6 +276,7 @@ class OauthHelper {
 		$url['host'] = strtolower($url['host']);
 		return $socket->buildUri($url);
 	}
+
 /**
  * Normalize  parameter values. Parameters are sorted by name, using lexicographical byte value ordering. 
  * If two or more parameters share the same name, they are sorted by their value.
@@ -285,8 +304,7 @@ class OauthHelper {
  * Parse uri wrapper. Handle both relative and global uri
  *
  * @param string $uri
- * @return string
- * @access public
+ * @return array
  */
 	public function parseUri($uri) {
 		$sock = new HttpSocket;
@@ -309,10 +327,14 @@ class OauthHelper {
 		return $uriArray;
 	}
 	
+/**
+ * Build uri wrapper.
+ *
+ * @param array $options
+ * @return string
+ */
 	public function buildUri($options) {
 		$sock = new HttpSocket;
 		return @$sock->buildUri($options);
 	}
-
 }
-?>

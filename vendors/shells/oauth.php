@@ -1,23 +1,47 @@
 <?php 
-	
+/**
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+ 
 App::import('Lib', 'OauthLib.OauthHelper');
 App::import('Lib', 'OauthLib.Consumer');
 App::import('Lib', 'OauthLib.RequestToken');
 App::import('Lib', 'OauthLib.RequestFactory');
 
-
+/**
+ * Oauth shell allow to perform authorize, sign, query signed data and perform xauth operations.
+ * 
+ * @package 	oauth_lib
+ * @subpackage	oauth_lib.vendors.shells
+ */
 class OauthShell extends Shell {
 
+/**
+ * Internal options
+ *
+ * @var array
+ */
 	public $options = array();
 	
+/**
+ * debug messages flags
+ *
+ * @var boolean
+ */
 	public $debugMessages = false;
 	
 /**
  * Override startup
  *
- * @access public
+ * @return void
  */
-	function startup() {
+	public function startup() {
 		$this->__settings();
 		if (!$this->__enoughOptions($this->command)) {
 			$this->out('Not enough options:');
@@ -26,6 +50,11 @@ class OauthShell extends Shell {
 		}
 	}	
 	
+/**
+ * Help information
+ *
+ * @return void
+ */
 	public function help() {
 		$this->out('
 	Supported commands:
@@ -70,6 +99,11 @@ class OauthShell extends Shell {
 	
 	}
 	
+/**
+ * Parse settings
+ *
+ * @return void
+ */
 	private function __settings() {
 		$this->options = array(
 			'oauth_nonce' => OauthHelper::generateKey(),
@@ -114,7 +148,7 @@ class OauthShell extends Shell {
 			}
 		}
 		if (!empty($this->params['options'])) {	
-			// read file and put it into this->params and rerun method
+			// @todo
 		}
 
 		if (!empty($this->params['parameters'])) {	
@@ -129,7 +163,13 @@ class OauthShell extends Shell {
 		}
 	}
 	
-    private function __enoughOptions($command) {
+/**
+ * Check possibility to perform operation
+ *
+ * @param string $command
+ * @return boolean
+ */
+   private function __enoughOptions($command) {
 		if ($command == 'authorize') {
 			return isset($this->options['oauth_consumer_key']) && isset($this->options['oauth_consumer_secret'])
 			&& isset($this->options['access_token_url']) && isset($this->options['authorize_url']) 
@@ -141,6 +181,10 @@ class OauthShell extends Shell {
 		return true;
     }
 	
+/**
+ * Perform authorize operation
+ *
+ */
 	public function authorize() {
 		$options = array(
 			'uri' => $this->options['uri'],
@@ -195,6 +239,10 @@ class OauthShell extends Shell {
 		}
 	}
 		
+/**
+ * Perform xauth operation
+ *
+ */
 	public function xauth() {
 		$options = array(
 			'uri' => $this->options['uri'],
@@ -208,8 +256,7 @@ class OauthShell extends Shell {
 		$Consumer->http = new HttpSocket($this->options['uri']);
 		
 		// parameters for OAuth 1.0a
-		$oauthVerifier = null;
-		
+		$oauthVerifier = null;		
 		$Consumer->init($this->options['oauth_consumer_key'], $this->options['oauth_consumer_secret'], $options);
 		try {
 			
@@ -243,6 +290,10 @@ class OauthShell extends Shell {
         $this->sign();
 	}
 	
+/**
+ * Perform sign operation
+ *
+ */
 	public function sign() {
 		$this->command = 'sign';
 		if (!$this->__enoughOptions($this->command)) {
@@ -287,6 +338,10 @@ class OauthShell extends Shell {
 		}
 	}
 
+/**
+ * Perform query operation
+ *
+ */
 	public function query() {
 		$this->command = 'query';
 		if (!$this->__enoughOptions($this->command)) {
@@ -324,6 +379,12 @@ class OauthShell extends Shell {
 		
 	}
 
+/**
+ * join params helper method
+ *
+ * @param array $data
+ * @return string
+ */
 	private function __joinParams($data) {
 		$params = array();
 		foreach ($data as $key => $values) {
@@ -338,6 +399,12 @@ class OauthShell extends Shell {
 		return $params;
 	}
 	
+/**
+ * prepare oauth params helper method
+ *
+ * @param boolean $includeOauthParams
+ * @return string
+ */
 	private function __prepareParams($includeOauthParams = true) {
 		$escapedPairs = array();
 		foreach ($this->options['parameters'] as $pair) {
@@ -362,6 +429,4 @@ class OauthShell extends Shell {
 		}
 		return array_merge($options, $cliParams);
 	}
-	
 }
-?>

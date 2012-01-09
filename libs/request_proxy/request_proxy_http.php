@@ -1,4 +1,13 @@
 <?php
+/**
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
 if (!class_exists('HttpSocket')) {
 	//App::import('Core', 'HttpSocket');
@@ -9,12 +18,18 @@ if (!class_exists('ClientHttp')) {
 }
 RequestFactory::register('ClientHttp', 'RequestProxyHttp');
 
+/**
+ * Request proxy http class. Provide access to request generated using client http library.
+ * 
+ * @package oauth_lib
+ * @subpackage oauth_lib.libs.request_proxy
+ */
 class RequestProxyHttp extends RequestProxyBase {
+
 /**
  * Request Object
  *
  * @var Object $request
- * @access public
  */
 	public $request;
 
@@ -22,7 +37,6 @@ class RequestProxyHttp extends RequestProxyBase {
  * Configuaration options
  *
  * @var array $options
- * @access public
  */
 	public $options;
 
@@ -31,7 +45,6 @@ class RequestProxyHttp extends RequestProxyBase {
  *
  * @param Object $request
  * @param array $options
- * @access public
  */
 	public function __construct(&$request, $options = array()) {
 		parent::__construct($request, $options);
@@ -41,7 +54,6 @@ class RequestProxyHttp extends RequestProxyBase {
  * Get request method
  *
  * @return string
- * @access public
  */
 	public function method() {
 		return $this->request->method;
@@ -51,7 +63,6 @@ class RequestProxyHttp extends RequestProxyBase {
  * Get request uri
  *
  * @return string
- * @access public
  */
 	public function uri() {
 		$uri = $this->options['uri'];
@@ -62,7 +73,6 @@ class RequestProxyHttp extends RequestProxyBase {
  * Get request parameter 
  *
  * @return array
- * @access public
  */
 	public function parameters() {
 		if (isset($this->options['clobber_request']) && $this->options['clobber_request']) {
@@ -78,7 +88,6 @@ class RequestProxyHttp extends RequestProxyBase {
  * Gather list of all parameters
  *
  * @return array
- * @access private
  */
 	private function __allParameters() {
 		$query = $this->__queryString();
@@ -114,7 +123,6 @@ class RequestProxyHttp extends RequestProxyBase {
  * Generate query string
  *
  * @return string
- * @access private
  */
 	private function __queryString() {
 		$data = '';
@@ -150,7 +158,6 @@ class RequestProxyHttp extends RequestProxyBase {
  * Fetch query parameters
  *
  * @return string
- * @access private
  */
 	private function __queryParams() {
 		$url = $this->request->query();
@@ -177,7 +184,6 @@ class RequestProxyHttp extends RequestProxyBase {
  * Fetch post parameters
  *
  * @return string
- * @access private
  */
 	private function __postParams() {
 		return $this->request->body();
@@ -187,7 +193,6 @@ class RequestProxyHttp extends RequestProxyBase {
  * Fetch header parameters
  *
  * @return string
- * @access private
  */
 	private function __authHeaderParams() {
 		if (!isset($this->request->authorization) || !substr($this->request->authorization, 0, 5) == 'OAuth') {
@@ -196,6 +201,4 @@ class RequestProxyHttp extends RequestProxyBase {
 		$this->auth_params = $this->request->authorization;
 		return $this->auth_params;
 	}
-
 }
-?>

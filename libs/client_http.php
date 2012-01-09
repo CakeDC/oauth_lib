@@ -1,29 +1,12 @@
 <?php
 /**
- * Short description for file.
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
  *
- * Long description for file
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
  *
- * PHP versions 4 and 5
- *
- * Copyright 2007-2008, Cake Development Corporation
- * 							1785 E. Sahara Avenue, Suite 490-423
- * 							Las Vegas, Nevada 89104
- *
- * You may obtain a copy of the License at:
- * License page: http://projects.cakedc.com/licenses/TBD  TBD
- *
- * @filesource
- * @copyright		Copyright 2007-2008, Cake Development Corporation
- * @package			oauth_lib
- * @subpackage		oauth_lib.libs
- * @license			http://projects.cakedc.com/licenses/TBD  TBD
- */
-/**
- * Short description for class.
- *
- * @package			oauth_lib
- * @subpackage		oauth_lib.libs
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 if (!class_exists('RequestFactory')) {
@@ -40,29 +23,36 @@ if (!class_exists('HttpSocket')) {
 	App::import('Vendor', 'OauthLib.HttpSocket');
 }
 
-
+/**
+ * CakePHP Oauth library http client implementation. This is HttpSocket extension that transarently handle oauth signing.
+ * 
+ * It provides set of methods to use in combine with Cakephp Auth component to authenticate users
+ * with remote auth servers like twitter.com, so users will have transparent authentication later.
+ *
+ * @package oauth_lib
+ * @subpackage oauth_lib.libs
+ */
 class ClientHelper {
 
 /**
  * Request object: e.g. ClientHttp 
  *
  * @var Request $request
- * @access public
  */
 	public $request = null;
+
 /**
  * Optional oauth parameters
  *
  * @var array $options
- * @access public
  */
 	public $options = array();
+
 /**
  * Constructor
  *
  * @param Request $request
  * @param array $options
- * @access public
  */
 	public function __construct(&$request, $options = array()) {
 		$this->request = $request;
@@ -79,11 +69,11 @@ class ClientHelper {
 			$this->options['signature_method'] = 'HMAC-SHA1';
 		}
 	}
+
 /**
  * Get nonce and generate it if not present 
  *
  * @return string
- * @access public
  */
 	public function nonce() {
 		if (!isset($this->options['nonce'])) {
@@ -91,11 +81,11 @@ class ClientHelper {
 		}
 		return $this->options['nonce'];
 	}
+
 /**
  * Get timestamp
  *
  * @return integer
- * @access public
  */
 	public function timestamp() {
 		if (!isset($this->options['timestamp'])) {
@@ -103,20 +93,20 @@ class ClientHelper {
 		}
 		return $this->options['timestamp'];
 	}
+
 /**
  * Return current unix time
  * 
  * @return integer
- * @access private
  */
 	private function __generateTimestamp() {
 		return time();
 	}
+
 /**
  * Oauth configuration parameters
  *
  * @return array
- * @access public
  */
 	public function oauthParameters() {
 		$params = array(
@@ -129,7 +119,7 @@ class ClientHelper {
 			'oauth_verifier' => @$this->options['oauth_verifier'],
 			'oauth_version' => '1.0'
 			);
-		//return $params;
+
 		foreach (array_keys($params) as $param)	{
 			if (strlen($params[$param]) == 0) {
 				unset($params[$param]);
@@ -137,7 +127,12 @@ class ClientHelper {
 		}
 		return $params;
 	}
-	
+
+/**
+ * Amend user agent header
+ *
+ * @param array $headers Headers
+ */
 	public function amendUserAgentHeader(&$headers) {
 		if (empty($this->oauthUaString)) {
 			$this->oauthUaString = "OAuth lib v 1.0.0.0";
@@ -153,7 +148,6 @@ class ClientHelper {
  * Set parameters method for RSA request method
  *
  * @param array $options
- * @access private
  */
 	private function __updateExtraOption(&$options) {
 		foreach (array('publicCert', 'privateCert', 'privateCertPass') as $field) {
@@ -162,12 +156,12 @@ class ClientHelper {
 			}
 		}
 	}	
+
 /**
  * Get request signature 
  *
  * @param array $extraOptions
  * @return string
- * @access public
  */
 	public function signature($extraOptions = array()) {
 		$options = array(
@@ -179,30 +173,33 @@ class ClientHelper {
 		$options = array_merge($options, $extraOptions);
 		return Signature::sign($this->request, $options);
 	}
+
 /**
  * Signature base string  
  *
  * @param array $extraOptions
  * @return string
- * @access public
  */
 	public function signatureBaseString($extraOptions = array()) {
-		$options = array('uri' => $this->options['request_uri'], 'consumer' => $this->options['consumer'], 'token' => $this->options['token'], 'parameters' => $this->oauthParameters());		
+		$options = array(
+			'uri' => $this->options['request_uri'],
+			'consumer' => $this->options['consumer'],
+			'token' => $this->options['token'],
+			'parameters' => $this->oauthParameters());
 		$this->__updateExtraOption($extraOptions);
 		$options = Set::merge($options, $extraOptions);
 		return Signature::signatureBaseString($this->request, $options);
 	}
+
 /**
  * Generate oauth header 
  *
  * @return string
- * @access public
  */
 	public function header() {
 		$parameters = $this->oauthParameters();
 		// $options = array_merge($this->options, array('parameters' => $parameters));
 		$options = array('parameters' => $parameters);
-		//debug($options);
 		$sig = $this->signature($options);
 		if (!empty($sig)) {
 			$version = $parameters['oauth_version'];
@@ -218,76 +215,84 @@ class ClientHelper {
 		}
 		return 'OAuth ' . $realm . $headerParamsStr;
 	}
+
 /**
  * Get request parameters
  *
  * @return array
- * @access public
  */
 	public function parameters() {
 		$proxy = RequestFactory::proxy($this->request);
 		return $proxy->parameters();
 	}
+
 /**
  * Get request parameters with oauth paramethers
  *
  * @return array
- * @access public
  */
 	public function parametersWithOauth() {
 		return array_merge($this->oauthParameters(), $this->parameters());
 	}
 }
- 
+
+/**
+ * ClientHTTP class
+ *
+ * @package oauth_lib
+ * @subpackage oauth_lib.libs
+ */
 class ClientHttp {
+
 /**
  * Path value 
  *
  * @var string path
- * @access public
  */
 	public $path = '';
+
 /**
  * Authrization string
  * 
  * @var string $authorization
  */
 	public $authorization = null;
+
 /**
  * Model asociated db table
  * 
  * @var mixed $useTable
- * @access public
  */
  	public $useTable = false;
+
 /**
  * HTTP method
  *
  * @var string $method
- * @access public
  */
 	public $method;
+
 /**
  * Request body
  *
  * @var string $body
- * @access public
  */
 	public $body;
+
 /**
  * instance of the URI class
  *
  * @var URI
- * @access public
  */
 	public $URI;
- /**
-  * Http socket
-  * 
-  * @var HttpSocket $sock
-  * @access public
-  */
+
+/**
+ * Http socket
+ * 
+ * @var HttpSocket $sock
+ */
 	public $sock;
+
 /**
  * Constructor
  * 
@@ -295,7 +300,6 @@ class ClientHttp {
  * @param mixed $url
  * @param array $headers, Http headers
  * @param string $method, Http method
- * @return void
  */
 	function __construct($socket, $url, $headers = array(), $method = 'GET') {
 		if (is_object($url) && get_class($url) == 'URI') {
@@ -315,33 +319,33 @@ class ClientHttp {
 		$this->updateURI($url);
 		$this->setMethod($method);
 	}
+
 /**
  * Set request method
  *
  * @param string $method
- * @access public
  */
 	public function setMethod($method = null) {
 		if (in_array($method, array('GET', 'POST', 'PUT', 'DELETE', 'HEAD'))) {
 			$this->method = $method;
 		}
 	}
+
 /**
  * Update uri 
  *
  * @param string $url
- * @access public
  */
 	public function updateURI($url = null) {
 		if (!empty($url)) {
 			$this->sock->configUri($this->parseUri($url));
 		}
 	}
+
 /**
  * Accessor to request body (post vars)
  *
  * @return post vars
- * @access public
  */
 	public function body($body = null) {
 		if (!empty($body)) {
@@ -349,12 +353,12 @@ class ClientHttp {
 		}
 		return $this->body;
 	}
+
 /**
  * Add a variable to the  POST request
  *
  * @param string $var
  * @param string $varValue
- * @access private
  */
 	private function __addPostVar($var, $varValue = '') {
 		if (is_array($varValue)) {
@@ -368,12 +372,12 @@ class ClientHttp {
 		}
 		$this->body .= rawurlencode($var) . '=' . rawurlencode($varValue);
 	}
+
 /**
  * Add set of post parameters
  *
  * @param array $params
  * @param string $sep
- * @access public
  */
 	public function setFormData($params, $sep = '&') {
 		$this->sock->config['request']['header']['Content-Type'] = 'application/x-www-form-urlencoded';
@@ -382,6 +386,7 @@ class ClientHttp {
 			$this->__addPostVar($k, $v);
 		}
 	}
+
 /**
  * Request wrapper to make local reference with real http server settings
  *
@@ -418,17 +423,17 @@ class ClientHttp {
 		if (empty($body) && (in_array($request->method, array('POST', 'PUT')))) {
 			$query['header']['Content-Length'] = 0; 
 		}
-		//OauthHelper::log(array('socket::query' => $query));
+		OauthHelper::log(array('socket::query' => $query));
 		$response = $this->sock->request($query);
-		//OauthHelper::log(array('socket::response' => $this->sock->response));
+		OauthHelper::log(array('socket::response' => $this->sock->response));
 		return $this->sock->response;
 	}
+
 /**
  * Extract path from uri.
  *
  * @param array $uri
  * @return unknown
- * @access public
  */
 	public function path($uri = null) {
 		if (!empty($uri)) {
@@ -437,16 +442,17 @@ class ClientHttp {
 		}
 		return $this->sock->config['request']['uri']['path'];
 	}
+
 /**
  * Return local part of uri
  *
  * @return string
- * @access public
  */	
 	public function localPath() {
 		$glUri = $this->parseUri($this->sock->buildUri($this->sock->config['request']['uri']));
 		return $this->sock->buildUri($glUri, '/%path?%query');
 	}
+
 /**
  * Configure oauth for request
  *
@@ -469,6 +475,7 @@ class ClientHttp {
 		$method = "__setOAuth" . Inflector::camelize($options['scheme']);
 		return $this->{$method}();
 	}
+
 /**
  * Build base signature string for request
  *
@@ -491,12 +498,12 @@ class ClientHttp {
 		$this->oauthHelper = new ClientHelper($this, $options);
 		return $this->oauthHelper->signatureBaseString($params);
 	}
+
 /**
  * Generate signed request uri
  *
  * @param HttpSocket $http
  * @return string
- * @access private
  */
 	private function __oauthFullRequestUri(&$http) {
 		$glUri = $this->parseUri($this->sock->buildUri($this->sock->config['request']['uri']));
@@ -524,31 +531,31 @@ class ClientHttp {
 		//OauthHelper::log($url);
 		return $url;
 	}
+
 /**
  * Set oauth request to header
  * 
  * @return void
- * @access private 
  */
 	private function __setOAuthHeader() {
 		$this->authorization = $this->oauthHelper->header();
 	}
+
 /**
  * Set oauth request to body 
  * 
  * @return void
- * @access private
  */
 	private function __setOAuthBody() {
 		$this->setFormData($this->oauthHelper->parametersWithOauth());
 		$paramsWithSig = array_merge($this->oauthHelper->parameters(), array('oauth_signature' => $this->oauthHelper->signature()));
 		$this->setFormData($paramsWithSig);
 	}
+
 /**
  * Set oauth request to query string
  *
  * @return void
- * @access private
  */
 	private function __setOAuthQueryString() {
 		$oauthParamsStr = OauthHelper::mapper($this->oauthHelper->oauthParameters(), "&", '');
@@ -574,7 +581,6 @@ class ClientHttp {
  *
  * @param string $uri
  * @return string
- * @access public
  */
 	public function parseUri($uri) {
 		$sock = new HttpSocket;
@@ -601,7 +607,6 @@ class ClientHttp {
  * Return query uri based on request configuration
  *
  * @return string
- * @access public
  */
 	public function query() {
 		if (isset($this->sock->config['request']['uri']['query'])) {
@@ -617,6 +622,4 @@ class ClientHttp {
 		}
 		return '';
 	}
-
 }
-?>

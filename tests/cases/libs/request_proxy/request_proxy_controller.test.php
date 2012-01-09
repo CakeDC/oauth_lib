@@ -1,11 +1,31 @@
 <?php
+/**
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
 App::import('Lib', 'OauthLib.RequestFactory');
 App::import('Lib', 'OauthLib.RequestProxyController');
 App::import('Controller', 'OauthLib.OauthLibAppController');
 
+/**
+ * RequestProxyControllerTest
+ *
+ * @package oauth_lib
+ * @subpackage oauth_lib.tests.cases.request_proxy
+ */
 class RequestProxyControllerTest extends CakeTestCase {
 
+/**
+ * testHeaderParsed
+ *
+ * @return void
+ */
 	public function testHeaderParsed() {
 		$request = null;
 		$requestProxyController = & new RequestProxyController($request);
@@ -20,6 +40,11 @@ class RequestProxyControllerTest extends CakeTestCase {
 		$this->assertEqual($required, $requestProxyController->headerParams());
 	}
 
+/**
+ * testParametersParsed
+ *
+ * @return void
+ */
 	public function testParametersParsed() {
 		App::import('Controller', 'AppController');
 		$request = & new OauthLibAppController();
@@ -50,7 +75,14 @@ class RequestProxyControllerTest extends CakeTestCase {
 		
 		$this->assertEqual($requestProxyController->method(), 'GET');
 	}
-	
+
+/**
+ * _getRequestProxy
+ *
+ * @param string $parameters 
+ * @param string $options 
+ * @return void
+ */
 	protected function _getRequestProxy($parameters, $options = array()) {
 		$request = & new OauthLibAppController();
 		$request->data = $parameters;
@@ -59,25 +91,36 @@ class RequestProxyControllerTest extends CakeTestCase {
 		$_ENV['Authorization'] = null;
 		return RequestFactory::proxy($request, $options);
 	}
- 
-  
- 
+
+/**
+ * testParameterKeysShouldPreserveBracketsFromHash
+ *
+ * @return void
+ */
 	public function testParameterKeysShouldPreserveBracketsFromHash() {
 		$proxy = $this->_getRequestProxy(array('message' => array('body' => 'This is a test')));
 		$this->assertEqual(array('message' => array('body' => 'This is a test')), $proxy->parametersForSignature());
 	}
-	
+
+/**
+ * testParameterKeysShouldPreserveParameters
+ *
+ * @return void
+ */
 	public function testParameterKeysShouldPreserveParameters() {
 		$proxy = $this->_getRequestProxy(array('message' => array('body' => 'This is a test')));
 		$this->assertEqual(array('message' => array('body' => 'This is a test')), $proxy->parametersForSignature());
 	}
 
+/**
+ * testParameterClobberRequestCheck
+ *
+ * @return void
+ */
 	public function testParameterClobberRequestCheck() {
 		$proxy = $this->_getRequestProxy(array('message' => array('body' => 'This is a test')), array('clobber_request' => true, 'parameters' => array('a' => 'b')));
 		$this->assertEqual(array('a' => 'b'), $proxy->parameters());
 		$proxy = $this->_getRequestProxy(array('message' => array('body' => 'This is a test')), array('clobber_request' => true));
 		$this->assertEqual(array(), $proxy->parameters());
 	}	
-
 }
-?>

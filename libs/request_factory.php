@@ -1,25 +1,33 @@
 <?php
+/**
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
+/**
+ * Request factory used to proxy requests to real object that provide request info.
+ *
+ * @package oauth_lib
+ * @subpackage oauth_lib.libs
+ */
 class RequestFactory {
+
 /**
  *  List of registered proxies
  *
  * @var array $availableProxies
- * @access public
  */
 	public $availableProxies = array();
-/**
- * Constructor
- *
- * @access public
- */
-	public function __construct() {
-	}
+
 /**
  * Singleton constructor
  *
  * @return RequestFactory instance
- * @access public
  */
 	public function &getInstance() {
 		static $instance = array();
@@ -28,24 +36,24 @@ class RequestFactory {
 		}
 		return $instance[0];
 	}
+
 /**
  * Factory register object method
  *
  * @param string $proxy
  * @param string $class
- * @access public
  */
 	public function register($proxy, $class) {	
 		$_this = RequestFactory::getInstance();
 		$_this->availableProxies[$proxy] = $class;
 	}
+
 /**
  * Wrap request class with proxy
  *
  * @param Request $request
  * @param string $options
  * @return RequestProxy
- * @access public
  */
 	public function proxy(&$request, $options = array()) {
 		$_this = RequestFactory::getInstance();
@@ -64,7 +72,6 @@ class RequestFactory {
 		throw new Exception("UnknownRequestType " . get_class($request));
 		return false;
 	}
-
 }
 
 if (!class_exists('RequestProxyBase')) {
@@ -79,5 +86,3 @@ if (!class_exists('RequestProxyHttp')) {
 if (!class_exists('RequestProxyMock')) {
 	App::import('Lib', 'OauthLib.RequestProxyMock');
 }
-
-?>

@@ -1,30 +1,12 @@
 <?php
-
 /**
- * Short description for file.
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
  *
- * Long description for file
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
  *
- * PHP versions 4 and 5
- *
- * Copyright 2007-2008, Cake Development Corporation
- * 							1785 E. Sahara Avenue, Suite 490-423
- * 							Las Vegas, Nevada 89104
- *
- * You may obtain a copy of the License at:
- * License page: http://projects.cakedc.com/licenses/TBD  TBD
- *
- * @filesource
- * @copyright		Copyright 2007-2008, Cake Development Corporation
- * @package			oauth_lib
- * @subpackage		oauth_lib.controllers.components
- * @license			http://projects.cakedc.com/licenses/TBD  TBD
- */
-/**
- * Short description for class.
- *
- * @package			oauth_lib
- * @subpackage		oauth_lib.controllers.components
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 if (!class_exists('Signature')) {
@@ -42,13 +24,21 @@ if (!class_exists('ClientHttp')) {
 	App::import('Lib', 'OauthLib.ClientHttp');
 }
 
+/**
+ * CakePHP Oauth library oauth auth component. 
+ * 
+ * It provides set of methods to use in combine with Cakephp Auth component to authenticate users
+ * with remote auth servers like twitter.com, so users will have transparent authentication later.
+ *
+ * @package oauth_lib
+ * @subpackage oauth_lib.controllers.components
+ */
 class OauthAuthComponent extends Object {
 
 /**
  * Controller instance
  *
  * @var AppController
- * @access public
  */
 	public $Controller;
 
@@ -56,7 +46,6 @@ class OauthAuthComponent extends Object {
  * Flag that identify oauth signed request actions
  *
  * @var string $useOauth
- * @access public
  */
 	public $useOauth = false;
 
@@ -64,7 +53,6 @@ class OauthAuthComponent extends Object {
  * Parameters show which action need to check with verifyOauthSignature
  *
  * @var array $requireOAuth
- * @access public
  */
 	public $requireOAuth = array(
 		'actions' => array(),
@@ -75,7 +63,6 @@ class OauthAuthComponent extends Object {
  * tokenData, is ServerToken for the request after verifyOauthSignature
  *
  * @var string $tokenData
- * @access public
  */
 	public $tokenData = null;
 
@@ -84,7 +71,6 @@ class OauthAuthComponent extends Object {
  * using Auth and Oauth autentification to same method
  *
  * @var boolean
- * @access public
  */
 	public $allowed = true;
 	
@@ -93,7 +79,6 @@ class OauthAuthComponent extends Object {
  * Load Server models and verify oauth request
  *
  * @return boolean
- * @access public
  */
 	public function initialize($Controller) {
 		$this->allowed = false;
@@ -126,7 +111,6 @@ class OauthAuthComponent extends Object {
  *
  * @params array $config
  * @return boolean
- * @access public
  */
 	public function verifyOauthRequest($config) {
 		return $this->verifyOauthSignature($config);
@@ -137,7 +121,6 @@ class OauthAuthComponent extends Object {
  *
  * @params array $config
  * @return boolean
- * @access public
  */
 	public function verifyOauthSignature($config) {
 		$proxy = & new RequestProxyController($this->Controller);
@@ -166,7 +149,6 @@ class OauthAuthComponent extends Object {
  * Configure oauth common settings
  *
  * @return boolean
- * @access public
  */
 	public function configureOAuth($consumer = null, $token = null, $options = array()) {
 		$this->default = array( 'consumer' => $consumer,
@@ -182,7 +164,6 @@ class OauthAuthComponent extends Object {
  * Signing oauth request
  *
  * @return boolean
- * @access public
  */
 	public function applyOAuth() {
 		$options = array_merge($this->default, $this->options);
@@ -205,7 +186,6 @@ class OauthAuthComponent extends Object {
  * Before render callback
  *
  * @return boolean
- * @access public
  */
 	public function beforeRender() {
 		if ($this->allowed && $this->config['enabled']) {
@@ -217,7 +197,6 @@ class OauthAuthComponent extends Object {
 /**
  * Header signing auth method implementation
  *
- * @access private
  */
 	private function __setOAuthHeader() {
 		header('Authorization:' . $this->oauthHelper->header());
@@ -227,7 +206,6 @@ class OauthAuthComponent extends Object {
  * Configure oauth parameters
  *
  * @return boolean
- * @access public
  */
 	function setOAuthParameters() {
 		$this->queryParameters = $this->oauthHelper->parametersWithOauth();
@@ -240,7 +218,6 @@ class OauthAuthComponent extends Object {
  * Possible need to implemented in the special view class
  *
  * @return boolean
- * @access private
  */
 	private function __setOAuthBody() {
 	}
@@ -250,7 +227,6 @@ class OauthAuthComponent extends Object {
  * Will not implemented
  *
  * @return boolean
- * @access private
  */
 	private function __setOAuthQueryString() {
 	}
@@ -259,7 +235,6 @@ class OauthAuthComponent extends Object {
  * Oauth request parameters
  *
  * @return boolean
- * @access public
  */
 	public function oauthParameters() {
 		$proxy = RequestFactory::proxy($this->Controller);
@@ -270,7 +245,6 @@ class OauthAuthComponent extends Object {
  * Build url for redirection
  *
  * @return string
- * @access protected
  */
 	protected function _gatherUrl() {
 		$params = $this->Controller->params['url'];
@@ -287,6 +261,4 @@ class OauthAuthComponent extends Object {
 		}
 		return $url;
 	}
-
 }
-?>

@@ -1,11 +1,23 @@
 <?php
+/**
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
 App::import('Lib', 'OauthLib.OauthHelper');
 App::import('Lib', 'OauthLib.ClientHttp');
 App::import('Lib', 'OauthLib.Token');
 
 /**
- * Superclass for tokens used by OAuth Clients
+ * Consumer oauth token used to perform signing and requesting info from oauth server
+ *
+ * @package oauth_lib
+ * @subpackage oauth_lib.libs.tokens
  */
 class ConsumerToken extends Token {
 
@@ -13,14 +25,16 @@ class ConsumerToken extends Token {
  * Consumer Object instance
  *
  * @var Consumer
- * @access public
  */
 	public $consumer;
 	
 /**
  * Constructor
  *
- * @access public
+ * @param string $consumer 
+ * @param string $token 
+ * @param string $secret 
+ * @param string $params 
  */
 	public function __construct($consumer, $token, $secret, $params = array()) {
 		parent::__construct($token, $secret, $params);
@@ -45,6 +59,7 @@ class ConsumerToken extends Token {
 		$this->response = $this->consumer->request($httpMethod, $path, $this, $requestOptions, $params);
 		return $this->response;
 	}
+
 /**
  * Sign a request generated elsewhere using ClientHttp
  *
@@ -56,5 +71,3 @@ class ConsumerToken extends Token {
 		return $this->consumer->sign($request, $this, $options);
 	}
 }
-
-?>

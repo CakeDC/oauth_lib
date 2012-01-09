@@ -1,4 +1,13 @@
 <?php
+/**
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
 RequestFactory::register('OauthLibAppController', 'RequestProxyController');
 RequestFactory::register('OauthAppController', 'RequestProxyController');
@@ -7,45 +16,41 @@ if (!class_exists('OauthHelper')) {
 	App::import('Lib', 'OauthLib.OauthHelper');
 }
 
+/**
+ * Request proxy controller class. Provide access to request coming to the controller
+ * 
+ * @package oauth_lib
+ * @subpackage oauth_lib.libs.request_proxy
+ */
 class RequestProxyController extends RequestProxyBase {
+
 /**
  * Request Object
  *
  * @var Object $request
- * @access public
  */
 	public $request;
+
 /**
  * Configuaration options
  *
  * @var array $options
- * @access public
  */
 	public $options;
-/**
- * Constructor
- *
- * @param Object $request
- * @param array $options
- * @access public
- */
-	public function __construct(&$request, $options = array()) {
-		parent::__construct($request, $options);
-	}
+
 /**
  * Get request method
  *
  * @return string
- * @access public
  */
 	public function method() {
 		return strtoupper($_SERVER['REQUEST_METHOD']);
 	}
+
 /**
  * Get request uri
  *
  * @return string
- * @access public
  */
 	public function uri() {
 		$uri = '';
@@ -66,11 +71,11 @@ class RequestProxyController extends RequestProxyBase {
 		$fullUri = $server . $uri;
 		return OauthHelper::getBaseUri($fullUri);
 	}
+
 /**
  * Get request parameter 
  *
  * @return array
- * @access public
  */
 	public function parameters() {
 		if (!empty($this->options['clobber_request'])) {
@@ -95,7 +100,6 @@ class RequestProxyController extends RequestProxyBase {
  * Fetch query parameters
  *
  * @return string
- * @access private
  */
 	private function __queryParams() {
 		$params = $this->request->params['url'];
@@ -108,7 +112,6 @@ class RequestProxyController extends RequestProxyBase {
  * Fetch request parameters
  *
  * @return string
- * @access private
  */
 	private function __requestParams() {
 		if (empty($this->request->data)) {
@@ -116,6 +119,4 @@ class RequestProxyController extends RequestProxyBase {
 		}
 		return $this->request->data;
 	}
-
 }
-?>

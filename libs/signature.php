@@ -1,4 +1,13 @@
 <?php 
+/**
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
 if (!class_exists('Hmac')) {
 	App::import('Lib', 'OauthLib.Hmac');
@@ -10,12 +19,18 @@ if (!class_exists('OauthHelper')) {
 	App::import('Lib', 'OauthLib.OauthHelper');
 }
 
+/**
+ * Signature factory used to proxy signatures classes based on signature type.
+ *
+ * @package oauth_lib
+ * @subpackage oauth_lib.libs
+ */
 class Signature {
+
 /**
  *  List of registered signature methods
  *
  * @var array $availableMethods
- * @access public
  */
 	public $availableMethods = array();
 
@@ -24,7 +39,6 @@ class Signature {
  *
  * @param string $signatureMethod
  * @param string $class
- * @access public
  */
 	public function register($signatureMethod, $class) {
 		$_this = Signature::getInstance();
@@ -32,17 +46,9 @@ class Signature {
 	}
 
 /**
- * Constructor
- *
- * @access public
- */
-	public function __construct() {
-	}
-/**
  * Singleton constructor
  *
  * @return Signature instance
- * @access public
  */
 	public function &getInstance() {
 		static $instance = array();
@@ -57,7 +63,6 @@ class Signature {
  *
  * @param Request $request
  * @param array $options
- * @access public
  */
 	public function build($request, $options = array()) {
 		$_this = Signature::getInstance();
@@ -77,7 +82,6 @@ class Signature {
  * @param Request $request
  * @param array $options
  * @return string request signature
- * @access public
  */
 	public function sign($request, $options = array()) {
 		$class = Signature::build($request, $options);
@@ -94,7 +98,6 @@ class Signature {
  * @param Request $request
  * @param array $options
  * @return boolean
- * @access public
  */
 	public function verify($request, $options = array()) {
 		$class = Signature::build($request, $options);
@@ -104,13 +107,13 @@ class Signature {
 			return null;
 		}
 	}
+
 /**
  * Generate base string for signature
  *
  * @param Request $request
  * @param array $options
  * @return string
- * @access public
  */
 	public function signatureBaseString($request, $options = array()) {
 		$class = Signature::build($request, $options);
@@ -124,6 +127,9 @@ class Signature {
 
 /**
  * Base signature class
+ *
+ * @package 	oauth_lib
+ * @subpackage	oauth_lib.libs
  */
 class SignatureBase {
 
@@ -131,7 +137,6 @@ class SignatureBase {
  * Secret token key
  *
  * @var string $tokenSecret
- * @access public
  */
 	public $tokenSecret;
 
@@ -139,7 +144,6 @@ class SignatureBase {
  * Options setting storage
  *
  * @var array $options
- * @access public
  */
 	public $options;
 
@@ -147,7 +151,6 @@ class SignatureBase {
  * Secret consumer key
  *
  * @var string $consumerSecret
- * @access public
  */
 	public $consumerSecret;
 
@@ -155,7 +158,6 @@ class SignatureBase {
  * Request Object
  *
  * @var Object $request
- * @access public
  */
 	public $request;
 
@@ -163,7 +165,6 @@ class SignatureBase {
  * digest class
  *
  * @var string $digestClass
- * @access public
  */
 	public $digestClass;
 
@@ -194,11 +195,13 @@ class SignatureBase {
  * Return signature for request
  *
  * @return string
- * @access public
  */
 	public function signature() {
-		OauthHelper::log(array('local' => base64_encode($this->__digest()), 'ext' => '', 'localString' => $this->signatureBaseString(), 'localSecret' => $this->_secret()));
-		//debug(array('local' => base64_encode($this->__digest()), 'ext' => '', 'localString' => $this->signatureBaseString(), 'localSecret' => $this->_secret()));
+		OauthHelper::log(array(
+			'local' => base64_encode($this->__digest()),
+			'ext' => '',
+			'localString' => $this->signatureBaseString(),
+			'localSecret' => $this->_secret()));
 		return base64_encode($this->__digest());
 	}
 
@@ -207,7 +210,6 @@ class SignatureBase {
  *
  * @param string $cmpSignature
  * @return boolean
- * @access public
  */
 	public function eq($cmpSignature) {
 		return base64_decode($this->signature()) == base64_decode($cmpSignature);
@@ -217,10 +219,12 @@ class SignatureBase {
  * Verify validness of signature
  *
  * @return boolean
- * @access public
  */
 	public function verify() {
-		OauthHelper::log(array('req_sig' => $this->request->signature(), 'local_sig' => $this->signature(), 'request' => get_class($this->request)));
+		OauthHelper::log(array(
+			'req_sig' => $this->request->signature(),
+			'local_sig' => $this->signature(),
+			'request' => get_class($this->request)));
 		return $this->eq($this->request->signature());
 	}
 
@@ -228,7 +232,6 @@ class SignatureBase {
  * Generate base string for signature
  *
  * @return string
- * @access public
  */
 	public function signatureBaseString() {
 		$normalizedParams = $this->request->parametersForSignature();
@@ -248,7 +251,6 @@ class SignatureBase {
  * Secret key for request
  *
  * @return string
- * @access public
  */
 	protected function _secret() {
 		OauthHelper::log($this->escape($this->consumerSecret) . '&' . $this->escape($this->tokenSecret));
@@ -259,7 +261,6 @@ class SignatureBase {
  * Calculate diggest for request signature
  *
  * @return string
- * @access public
  */
 	private function __digest() {
 		$this->digestClass->setKey($this->_secret());
@@ -271,7 +272,6 @@ class SignatureBase {
  *
  * @param string $value
  * @return string
- * @access public
  */
 	public function escape($value) {
 		if ($value === false) {
@@ -282,16 +282,19 @@ class SignatureBase {
 	}
 }
 
-
+/**
+ * Plaintext signature class
+ *
+ * @package 	oauth_lib
+ * @subpackage	oauth_lib.libs
+ */
 Signature::register('PLAINTEXT', 'SignaturePlaintext');
-
 class SignaturePlaintext extends SignatureBase {
 
 /**
  * Return signature for request
  *
  * @return string
- * @access public
  */
 	public function signature() {
 		return $this->signatureBaseString();
@@ -302,7 +305,6 @@ class SignaturePlaintext extends SignatureBase {
  *
  * @param string $cmpSignature
  * @return boolean
- * @access public
  */
 	public function eq($cmpSignature) {
 		return $this->signature() == $this->escape($cmpSignature);
@@ -312,29 +314,20 @@ class SignaturePlaintext extends SignatureBase {
  * Generate base string for signature
  *
  * @return string
- * @access public
  */
 	public function signatureBaseString() {
 		return $this->escape($this->_secret());
 		return $this->_secret();
 	}
-
-/**
- * Secret key for request
- *
- * @return string
- * @access public
- */
-	// protected function _secret() {
-		// OauthHelper::log($this->escape($this->consumerSecret) . '&' . $this->escape($this->tokenSecret));
-		//return $this->escape(parent::_secret());
-		// return parent::_secret();
-	// }
-	
 }
 
+/**
+ * MD5 signature class implementation
+ *
+ * @package 	oauth_lib
+ * @subpackage	oauth_lib.libs
+ */
 Signature::register('HMAC-MD5', 'SignatureMD5');
-
 class SignatureMD5 extends SignatureBase {
 
 /**
@@ -347,12 +340,17 @@ class SignatureMD5 extends SignatureBase {
 		parent::__construct($request, $options);
 		$this->digestClass = &new Hmac(null, 'md5');
 	}
-
 }
 
+/**
+ * SHA1 signature class implementation
+ *
+ * @package 	oauth_lib
+ * @subpackage	oauth_lib.libs
+ */
 Signature::register('HMAC-SHA1', 'SignatureSHA1');
-
 class SignatureSHA1 extends SignatureBase {
+
 /**
  * Constructor
  *
@@ -365,16 +363,19 @@ class SignatureSHA1 extends SignatureBase {
 	}
 }
 
-
+/**
+ * RSA-SHA1 signature class implementation
+ *
+ * @package 	oauth_lib
+ * @subpackage	oauth_lib.libs
+ */
 Signature::register('RSA-SHA1', 'SignatureRsaSha1');
-
 class SignatureRsaSha1 extends SignatureBase {
 
 /**
  * Public certificate
  *
  * @var string $publicCert
- * @access public
  */
 	public $publicCert = null;
 
@@ -382,7 +383,6 @@ class SignatureRsaSha1 extends SignatureBase {
  * Private certificate
  *
  * @var string $privateCert
- * @access public
  */
 	public $privateCert = null;
 
@@ -390,7 +390,6 @@ class SignatureRsaSha1 extends SignatureBase {
  * Private certificate
  *
  * @var string $privateCert
- * @access public
  */
 	public $privateCertPass = null;
 
@@ -423,7 +422,6 @@ class SignatureRsaSha1 extends SignatureBase {
  * Private certificate getter
  *
  * @return string
- * @access protected
  */
 	protected function _fetchPublicCertificate() {
 		return $this->publicCert;
@@ -433,7 +431,6 @@ class SignatureRsaSha1 extends SignatureBase {
  * Private certificate
  *
  * @var string $privateCert
- * @access protected
  */
 	protected function _fetchPrivateCertificate() {
 		if (empty($this->privateCertPass)) {
@@ -447,7 +444,6 @@ class SignatureRsaSha1 extends SignatureBase {
  * Return signature for request
  *
  * @return string
- * @access public
  */
 	public function signature() {
 		$privateKeyId = openssl_get_privatekey($this->_fetchPrivateCertificate());
@@ -461,7 +457,6 @@ class SignatureRsaSha1 extends SignatureBase {
  *
  * @param string $cmpSignature
  * @return boolean
- * @access public
  */
 	public function verify($cmpSignature = null) {
 		if ($cmpSignature == null) {
@@ -477,4 +472,3 @@ class SignatureRsaSha1 extends SignatureBase {
 		return $ok == 1;
 	} 
 }
-?>

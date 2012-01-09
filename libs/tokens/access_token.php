@@ -1,21 +1,30 @@
 <?php
+/**
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
 App::import('Lib', 'OauthLib.OauthHelper');
 App::import('Lib', 'OauthLib.ConsumerToken');
 
 /**
  * The Access Token is used for the actual "real" web service calls thatyou perform against the server
+ *
+ * @package 	oauth_lib
+ * @subpackage	oauth_lib.libs.tokens
  */
 class AccessToken extends ConsumerToken {
 
 /**
- * @todo dont use it yet. dont remove or change name
- *
  * Make a signed request using given httpMethod to the path
  *
  *   $token->request('GET','/people');
  *   $token->request('POST','/people',$person,array('Content-Type' => 'application/xml' ));
- *
  *
  * @param string $httpMethod
  * @param string $path
@@ -51,6 +60,7 @@ class AccessToken extends ConsumerToken {
 	public function get($path, $headers = array(), $params = array(), $requestOptions = array()) {
 		return $this->request('GET', $path, $headers, $params, $requestOptions);
 	}
+
 /**
  * Make a regular head request using AccessToken
  *
@@ -64,6 +74,7 @@ class AccessToken extends ConsumerToken {
 	public function head($path, $headers = array(), $params = array(), $requestOptions = array()) {
 		return $this->request('HEAD', $path, $headers, $params, $requestOptions);
 	}
+
 /**
  * Make a regular post request using AccessToken
  *
@@ -82,6 +93,7 @@ class AccessToken extends ConsumerToken {
 		$params['data'] = $body;
 		return $this->request('POST', $path, $headers, $params, $requestOptions);
 	}
+
 /**
  * Make a regular put request using AccessToken
  *
@@ -100,6 +112,7 @@ class AccessToken extends ConsumerToken {
 		$params['data'] = $body;
 		return $this->requestByToken('PUT', $path, $headers, $params, $requestOptions);
 	}
+
 /**
  * Make a regular delete request using AccessToken
  *
@@ -115,4 +128,3 @@ class AccessToken extends ConsumerToken {
 		return $this->requestByToken('DELETE', $path, $headers, $params, $requestOptions);
 	}
 }
-?>

@@ -1,10 +1,30 @@
 <?php
+/**
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
 App::import('Lib', 'OauthLib.RequestFactory');
 App::import('Lib', 'OauthLib.ClientHttp');
 
+/**
+ * Oauth Tests
+ *
+ * @package oauth_lib
+ * @subpackage oauth_lib.tests.libs
+ */
 class RequestFactoryTest extends CakeTestCase {
 
+/**
+ * testThatProxySimpleGetRequestWorks
+ *
+ * @return void
+ */
 	public function testThatProxySimpleGetRequestWorks() {
 		$http = null;
 		$request = &new ClientHttp($http, '/test?key=value');
@@ -15,6 +35,11 @@ class RequestFactoryTest extends CakeTestCase {
 		$this->assertEqual('GET', $requestProxy->method());
 	}
 
+/**
+ * testThatProxySimplePostRequestWorks
+ *
+ * @return void
+ */
 	public function testThatProxySimplePostRequestWorks() {
 		$http = null;
 		$request = &new ClientHttp($http, '/test', array(), 'POST');
@@ -26,6 +51,11 @@ class RequestFactoryTest extends CakeTestCase {
 		$this->assertEqual('POST', $requestProxy->method());
 	}
 
+/**
+ * testThatProxyPostAndGetRequestWorks
+ *
+ * @return void
+ */
 	public function testThatProxyPostAndGetRequestWorks() {
 		$http = null;
 		$request = &new ClientHttp($http, '/test?key=value', array(), 'POST');
@@ -37,4 +67,3 @@ class RequestFactoryTest extends CakeTestCase {
 		$this->assertEqual('POST', $requestProxy->method());
 	}
 }
-?>

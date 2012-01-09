@@ -1,22 +1,59 @@
 <?php
+/**
+ * Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 
+/**
+ * Mock Object used to store any type of data.
+ * 
+ * @package oauth_lib
+ * @subpackage oauth_lib.libs.request_proxy
+ */
 class MockObject {
+
+/**
+ * s
+ *
+ * @var string
+ */
 	protected $s=array();
+
+/**
+ * Setter
+ *
+ * @param string $k 
+ * @param string $c 
+ * @return void
+ */
 	function __set($k, $c) { $this->s[$k]=$c; }
+
+/**
+ * get
+ *
+ * @param string $k 
+ * @return void
+ * @author Predominant
+ */
 	function __get($k) { return $this->s[$k]; } 
+
 /**
  * Configuaration options
  *
  * @var array $options
- * @access public
  */
 	public $data;
+
 /**
  * Constructor
  *
  * @param Object $request
  * @param array $options
- * @access public
  */
 	public function __construct($data = array()) {
 		foreach($data as $k => $v) {
@@ -26,15 +63,19 @@ class MockObject {
 	}
 }
 
+/**
+ * Request proxy mock class. Provide interface to extract info from MockObject
+ * 
+ * @package oauth_lib
+ * @subpackage oauth_lib.libs.request_proxy
+ */
 RequestFactory::register('MockObject', 'RequestProxyMock');
-
-
 class RequestProxyMock extends RequestProxyBase {
+
 /**
  * Request Object
  *
  * @var Object $request
- * @access public
  */
 	public $request;
 
@@ -42,26 +83,13 @@ class RequestProxyMock extends RequestProxyBase {
  * Configuaration options
  *
  * @var array $options
- * @access public
  */
 	public $options;
-
-/**
- * Constructor
- *
- * @param Object $request
- * @param array $options
- * @access public
- */
-	public function __construct(&$request, $options = array()) {
-		parent::__construct($request, $options);
-	}
 
 /**
  * Get request method
  *
  * @return string
- * @access public
  */
 	public function method() {
 		return $this->request->method;
@@ -71,7 +99,6 @@ class RequestProxyMock extends RequestProxyBase {
  * Get request uri
  *
  * @return string
- * @access public
  */
 	public function uri() {
 		return $this->request->uri;
@@ -81,7 +108,6 @@ class RequestProxyMock extends RequestProxyBase {
  * Get request parameter 
  *
  * @return array
- * @access public
  */
 	public function parameters() {
 		return $this->request->parameters;
@@ -90,11 +116,11 @@ class RequestProxyMock extends RequestProxyBase {
 	public function setParameters($value) {
 		$this->request->parameters = $value;
 	}
+
 /**
  * Mock for nomalized uri method
  *
  * @return array
- * @access public
  */
 	public function normalizedUri() {
 		try {
@@ -103,6 +129,4 @@ class RequestProxyMock extends RequestProxyBase {
 			return $this->uri();
 		}
 	}
-
 }
-?>
