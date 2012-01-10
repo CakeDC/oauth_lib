@@ -9,12 +9,16 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-RequestFactory::register('OauthLibAppController', 'RequestProxyController');
-RequestFactory::register('OauthAppController', 'RequestProxyController');
-RequestFactory::register('AppController', 'RequestProxyController');
 if (!class_exists('OauthHelper')) {
 	App::uses('OauthHelper', 'OauthLib.Lib');
 }
+if (!class_exists('RequestFactory')) {
+	App::uses('RequestFactory', 'OauthLib.Lib');
+}
+
+RequestFactory::register('OauthLibAppController', 'RequestProxyController');
+RequestFactory::register('OauthAppController', 'RequestProxyController');
+RequestFactory::register('AppController', 'RequestProxyController');
 
 /**
  * Request proxy controller class. Provide access to request coming to the controller
