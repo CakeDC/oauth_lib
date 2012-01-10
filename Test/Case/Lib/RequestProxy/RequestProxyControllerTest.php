@@ -28,7 +28,7 @@ class RequestProxyControllerTest extends CakeTestCase {
  */
 	public function testHeaderParsed() {
 		$request = null;
-		$requestProxyController = & new RequestProxyController($request);
+		$requestProxyController = &new RequestProxyController($request);
 		$_ENV['Authorization'] = "OAuth realm=\"\", oauth_nonce=\"225579211881198842005988698334675835446\", oauth_signature_method=\"HMAC-SHA1\", oauth_token=\"token_411a7f\", oauth_timestamp=\"1199645624\", oauth_consumer_key=\"consumer_key_86cad9\", oauth_signature=\"26g7wHTtNO6ZWJaLltcueppHYiI%3D\", oauth_version=\"1.0\"";
 		$required = array('oauth_consumer_key' => 'consumer_key_86cad9',
 			'oauth_nonce' => '225579211881198842005988698334675835446',
@@ -46,8 +46,9 @@ class RequestProxyControllerTest extends CakeTestCase {
  * @return void
  */
 	public function testParametersParsed() {
-		$request = & new OauthLibAppController();
-		$request->params['url'] = array('test' => 'data');
+		$cakeRequest = new CakeRequest();
+		$request = &new OauthLibAppController($cakeRequest);
+		$request->request->params['url'] = array('test' => 'data');
 		$requestProxyController = & new RequestProxyController($request);
 		$_ENV['Authorization'] = "OAuth realm=\"\", oauth_nonce=\"225579211881198842005988698334675835446\", oauth_signature_method=\"HMAC-SHA1\", oauth_token=\"token_411a7f\", oauth_timestamp=\"1199645624\", oauth_consumer_key=\"consumer_key_86cad9\", oauth_signature=\"26g7wHTtNO6ZWJaLltcueppHYiI%3D\", oauth_version=\"1.0\"";
 		$required = array('oauth_consumer_key' => 'consumer_key_86cad9',
@@ -69,9 +70,8 @@ class RequestProxyControllerTest extends CakeTestCase {
 		$_SERVER['HTTPS'] = null;
 		$_SERVER['SERVER_PORT'] = 8080;
 		$this->assertEqual($requestProxyController->uri(), 'http://www.org:8080/test');
-		
+
 		$_SERVER['REQUEST_METHOD'] = 'GET';
-		
 		$this->assertEqual($requestProxyController->method(), 'GET');
 	}
 
@@ -83,10 +83,11 @@ class RequestProxyControllerTest extends CakeTestCase {
  * @return void
  */
 	protected function _getRequestProxy($parameters, $options = array()) {
-		$request = & new OauthLibAppController();
+		$cakeRequest = new CakeRequest();
+		$request = &new OauthLibAppController($cakeRequest);
 		$request->request->data = $parameters;
 		$request->request->params['url'] = array('url' => '/', 'ext' => 'html');
-	    $_ENV['CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
+		$_ENV['CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
 		$_ENV['Authorization'] = null;
 		return RequestFactory::proxy($request, $options);
 	}
