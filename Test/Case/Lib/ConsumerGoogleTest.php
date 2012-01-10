@@ -150,7 +150,7 @@ class ConsumerGoogleTest extends CakeTestCase {
 		$options2['privateCertPass']      = '';
 
 		$this->requestToken = $this->consumer->getRequestToken($options);
-		$this->assertTrue($this->requestToken);
+		$this->assertTrue(!empty($this->requestToken));
 	}  
 
 /**

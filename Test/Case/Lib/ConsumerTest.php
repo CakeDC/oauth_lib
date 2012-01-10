@@ -292,7 +292,7 @@ class ConsumerTest extends OauthTestCase {
 		$config = array('host' => 'term.ie', 'request' => array('uri' => array('host' => 'term.ie')));
 		$this->consumer->http = new HttpSocket($config);
 		$this->requestToken = $this->consumer->getRequestToken(array(), array(), $this->Token);
-		$this->assertTrue($this->requestToken);
+		$this->assertTrue(!empty($this->requestToken));
 		$this->assertEqual('requestkey', $this->requestToken->token);
 		$this->assertEqual('requestsecret', $this->requestToken->tokenSecret);
 		$this->assertEqual('http://term.ie/oauth/example/authorize.php?oauth_token=requestkey', $this->requestToken->authorizeUrl());
