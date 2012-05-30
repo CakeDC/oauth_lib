@@ -1,23 +1,21 @@
 <?php
 /**
- * Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * Copyright 2012, Cake Development Corporation (http://cakedc.com)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+ * @copyright Copyright 2012, Cake Development Corporation (http://cakedc.com)
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 if (!function_exists('apache_request_headers')) { 
 	function apache_request_headers() { 
 		foreach($_SERVER as $key => $value) { 
-			if (substr($key, 0, 5) == "HTTP_") { 
-				$key = str_replace(" ","-",ucwords(strtolower(str_replace("_", " ", substr($key, 5))))); 
-				$out[$key] = $value; 
-			} else { 
-				$out[$key] = $value; 
+			if (substr($key, 0, 5) === 'HTTP_') { 
+				$key = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5))))); 
 			} 
+			$out[$key] = $value; 
 		} 
 		return $out; 
 	} 
