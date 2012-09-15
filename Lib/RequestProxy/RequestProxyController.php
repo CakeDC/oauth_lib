@@ -19,6 +19,7 @@ if (!class_exists('RequestFactory')) {
 RequestFactory::register('OauthLibAppController', 'RequestProxyController');
 RequestFactory::register('OauthAppController', 'RequestProxyController');
 RequestFactory::register('AppController', 'RequestProxyController');
+RequestFactory::register('OauthDispatcherFilter', 'RequestProxyController'); 
 
 /**
  * Request proxy controller class. Provide access to request coming to the controller
@@ -106,7 +107,7 @@ class RequestProxyController extends RequestProxyBase {
  * @return string
  */
 	private function __queryParams() {
-		$params = $this->request->params['url'];
+		$params = $this->request->request->params['url'];
 		unset($params['url']);
 		unset($params['ext']);
 		return $params;
@@ -118,9 +119,9 @@ class RequestProxyController extends RequestProxyBase {
  * @return string
  */
 	private function __requestParams() {
-		if (empty($this->request->data)) {
+		if (empty($this->request->request->data)) {
 			return array();
 		}
-		return $this->request->data;
+		return $this->request->request->data;
 	}
 }

@@ -14,6 +14,7 @@ App::uses('RequestFactory', 'OauthLib.Lib');
 App::uses('RequestProxyController', 'OauthLib.RequestProxy');
 App::uses('Consumer', 'OauthLib.Lib');
 App::uses('Signature', 'OauthLib.Lib');
+App::uses('HttpSocketProxy', 'OauthLib.Lib/Network/Http');
 App::uses('ConsumerToken', 'OauthLib.Token');
 App::uses('OauthAppController', 'OauthLib.Controller');
 App::uses('File', 'Utility');
@@ -41,7 +42,8 @@ class ClientHttpGoogleTest extends CakeTestCase {
 		$this->timestamp = "1199645624";
 		$config = array('host' => 'example.com', 'request' => array('uri' => array('host' => 'example.com')));
 		$this->http = new HttpSocket($config);
-		$this->requestUriN = $this->http->parseUri('http://example.com/test?key=value');
+		$proxy = new HttpSocketProxy($this->http);
+		$this->requestUriN = $proxy->parseUri('http://example.com/test?key=value');
 	}
 
 /**

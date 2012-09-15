@@ -12,7 +12,8 @@
 App::uses('RequestFactory', 'OauthLib.Lib');
 App::uses('RequestProxyController', 'OauthLib.RequestProxy');
 App::uses('ClientHttp', 'OauthLib.Lib');
-App::uses('HttpSocket', 'OauthLib.Vendor');
+			App::uses('HttpSocket', 'Network/Http');
+			// App::uses('HttpSocket', 'OauthLib.Vendor');
 
 /**
  * RequestProxyHttpTest

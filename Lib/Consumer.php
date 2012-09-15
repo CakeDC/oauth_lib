@@ -9,10 +9,8 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-if (!class_exists('HttpSocket')) {
-	App::uses('HttpSocket', 'OauthLib.Vendor');
-}
-
+App::uses('HttpSocketProxy', 'OauthLib.Lib/Network/Http');
+App::uses('HttpSocket', 'Network/Http');
 App::import('Model', 'OauthLib.Socket');
 App::uses('ClientHttp', 'OauthLib.Lib');
 App::uses('OauthHelper', 'OauthLib.Lib');
@@ -167,8 +165,10 @@ class Consumer {
 			return $this->http;
 		}
 		$url = $this->site();
-		$this->http = & new HttpSocket();
-		$this->http->configUri($url);
+		$this->http = new HttpSocket();
+		$proxy = new HttpSocketProxy($this->http);
+		$proxy->configUri($url);
+		$this->http = $proxy->Socket;
 		if ($this->http->config['request']['uri']['scheme'] != 'http') {
 			$this->http->config['scheme'] = $this->http->config['request']['uri']['scheme'];
 		}
@@ -228,11 +228,9 @@ class Consumer {
 		switch (strtoupper($httpMethod)) {
 			case 'POST':
 				$request = new ClientHttp($socket, $path, $headers, 'POST');
-				//$request->Request->registerCustomHeader('Content-Length: 0'); // Default to 0
 			break;
 			case 'PUT':
 				$request = new ClientHttp($socket, $path, $headers, 'PUT');
-				//$request->Request->registerCustomHeader('Content-Length: 0');
 			break;
 			case 'GET':
 				$request = new ClientHttp($socket, $path, $headers, 'GET');
@@ -251,7 +249,6 @@ class Consumer {
 			$request->setFormData($data);
 		} elseif (!empty($data)) {
 			$request->body($data);
-			//$request->Request->registerCustomHeader('Content-Length: ' . strlen($data));
 		}
 		return $request;
 	}
@@ -308,9 +305,8 @@ class Consumer {
  */
 	public function tokenRequest($httpMethod, $path, &$token = null, $requestOptions = array(), $params = array()) {
 		$response = $this->request($httpMethod, $path, $token, $requestOptions, $params);
-		$code = $response['status']['code'];
+		$code = $response->code;
 		if ($code >= 200 && $code <= 299) {
-		//if ($response['status']['code'] == "200") {}
 			if (substr($response['body'], 0, 4) == 'Fail') {
 				throw new FailRequestException($response['body']);
 			}
@@ -319,17 +315,16 @@ class Consumer {
 			$result = array();
 			foreach($data as $rec) {
 				list($key, $value) = split('=', $rec);
-				//$result[$key] = $value;
 				$result[$key] = OauthHelper::unescape($value);
 			}
-			$response['status']['success'] = true;
+			$response->success = true;
 			return $result;
 		} elseif ($code >= 300 && $code <= 399) {
-			$response['status']['success'] = false;
+			$response->success = false;
 		} elseif ($code >= 400 && $code <= 499) {
 			throw new UnauthorizedException($response);
 		} else {
-			$response['status']['success'] = false;
+			$response->success = false;
 		}
 		return false;
 	}
@@ -344,7 +339,6 @@ class Consumer {
  */
 	public function sign(&$request, $token = null, $requestOptions = array()) {
 		$options = array_merge($this->options, $requestOptions);
-		//$options = array_merge(array('scheme' => $this->scheme()), $requestOptions);
 		return $request->oauth($this->http(), $this, $token, $options);
 	}
 

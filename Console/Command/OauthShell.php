@@ -9,10 +9,10 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
  
-App::uses('OauthHelper', 'OauthLib.Lib')
-App::uses('Consumer', 'OauthLib.Lib')
-App::uses('RequestToken', 'OauthLib.Lib')
-App::uses('RequestFactory', 'OauthLib.Lib')
+App::uses('OauthHelper', 'OauthLib.Lib');
+App::uses('Consumer', 'OauthLib.Lib');
+App::uses('RequestToken', 'OauthLib.Lib');
+App::uses('RequestFactory', 'OauthLib.Lib');
 
 /**
  * Oauth shell allow to perform authorize, sign, query signed data and perform xauth operations.
@@ -42,61 +42,111 @@ class OauthShell extends Shell {
  * @return void
  */
 	public function startup() {
+
 		$this->__settings();
 		if (!$this->__enoughOptions($this->command)) {
 			$this->out('Not enough options:');
-			$this->help();
+			$this->out($this->OptionParser->help($this->command)); 
 			exit();
 		}
 	}	
-	
+
 /**
- * Help information
+ * get the option parser.
  *
  * @return void
  */
-	public function help() {
-		$this->out('
-	Supported commands:
-	-------------------
-	authorize: used for retrieve access token and secret by user
-	call:      Do call to oauth protected resource
-	debug:     Generate and print OAuth signature
-	sign:      Generate an OAuth signature
-		');
-		$this->out('
-	Usage: cake oauth [options] <command>
-	-body                    -- Use the request body for OAuth parameters.") do
-	-consumer_key KEY        -- Specifies the consumer key to use.") do |v|
-	-consumer_secret SECRET  -- Specifies the consumer secret to use.") do |v|
-	-header                  -- Use the Authorization header for OAuth parameters (default).
-	-query_string            -- Use the query string for OAuth parameters.
-	-options FILE            -- Read options from a file
+	public function getOptionParser() {
 
-	options for signing and querying
+		$parser = parent::getOptionParser();
+		return $parser->description('Supported commands:')
+			->addOption('header', array(
+				'help' => 'Use the Authorization header for OAuth parameters (default)',
+				'boolean' => true,
+				'default' => true,
+			))
+			->addOption('body', array(
+				'help' => 'Use the request body for OAuth parameters.',
+				'boolean' => true,
+			))
+			->addOption('query_string', array(
+				'help' => 'Use the query string for OAuth parameters.',
+				'boolean' => true,
+			))
+			->addOption('consumer_key', array(
+				'help' => 'Specifies the consumer key to use.',
+			))
+			->addOption('consumer_secret', array(
+				'help' => 'Specifies the consumer secret to use.',
+			))
 
-	-method METHOD           -- Specifies the method (e.g. GET) to use when signing.
-	-nonce NONCE             -- Specifies the none to use.
-	-parameters PARAMETERS   -- Specifies the parameters to use when signing.
-	-signature-method METHOD -- Specifies the signature method to use; defaults to HMAC-SHA1.
-	-secret SECRET           -- Specifies the token secret to use.
-	-timestamp TIMESTAMP     -- Specifies the timestamp to use.
-	-token TOKEN             -- Specifies the token to use.
-	-realm REALM             -- Specifies the realm to use.
-	-uri URI                 -- Specifies the URI to use when signing.
-	-version VERSION         -- Specifies the OAuth version to use.
-	-no_version              -- Omit oauth_version.
-	-debug                   -- Be verbose.
-	
-	options for authorization
+			->addOption('method', array(
+				'help' => 'Specifies the method (e.g. GET) to use when signing.',
+				'required' => false))
+			->addOption('nonce', array(
+				'help' => 'Specifies the nonce to use.',
+				'required' => false))
+			->addOption('parameters', array(
+				'help' => 'Specifies the parameters to use when signing.',
+				'required' => false))
+			->addOption('signature-method', array(
+				'help' => 'Specifies the signature method to use; defaults to HMAC-SHA1.',
+				'required' => false))
+			->addOption('secret', array(
+				'help' => 'Specifies the token secret to use.',
+				'required' => false))
+			->addOption('timestamp', array(
+				'help' => 'Specifies the timestamp to use.',
+				'required' => false))
+			->addOption('token', array(
+				'help' => 'Specifies the token to use.',
+				'required' => false))
+			->addOption('realm', array(
+				'help' => 'Specifies the realm to use.',
+				'required' => false))
+			->addOption('uri', array(
+				'help' => 'Specifies the uri to use.',
+				'required' => false))
+			->addOption('version', array(
+				'help' => 'Specifies the version to use.',
+				'required' => false))
+			->addOption('no_version', array(
+				'help' => 'Omit oauth_version',
+				'boolean' => true,
+				'required' => false))
+			->addOption('debug', array(
+				'help' => 'Be verbose',
+				'boolean' => true,
+				'required' => false))
 
-	-access_token_url URL    -- Specifies the access token URL.
-	-authorize_url URL       -- Specifies the authorization URL.
-	-callback_url URL        -- Specifies a callback URL.") do |v|
-	-request_token_url URL   -- Specifies the request token URL.
-	-scope SCOPE             -- Specifies the scope (Google-specific).
-	');
-	
+				
+			->addOption('access_token_url', array(
+				'help' => 'Specifies the access token URL.',
+				'required' => false))
+			->addOption('authorize_url', array(
+				'help' => 'Specifies the authorization URL.',
+				'required' => false))
+			->addOption('callback_url', array(
+				'help' => 'Specifies a callback URL.',
+				'required' => false))
+			->addOption('request_token_url', array(
+				'help' => 'Specifies the request token URL.',
+				'required' => false))
+			->addOption('scope', array(
+				'help' => 'Specifies the scope (Google-specific).',
+				'required' => false))
+			
+			
+			->addSubcommand('xauth', array(
+					'help' => 'Perform xauth-based authorization on server'))
+			->addSubcommand('sign', array(
+					'help' => 'Generate an OAuth signature'))
+			->addSubcommand('debug', array(
+					'help' => 'Generate an OAuth signature'))
+			->addSubcommand('query', array(
+					'help' => 'Do call to oauth protected resource'))
+			->addSubcommand('authorize', array(
+					'help' => 'Perform authorize request to retrieve access token and secret by user'));
 	}
 	
 /**
@@ -136,7 +186,7 @@ class OauthShell extends Shell {
 			'username' => 'username',
 			'password' => 'password',
 		);
-		
+
 		foreach ($values as $k => $v) {		
 			if (!empty($this->params[$k])) {
 				$this->options[$v] = $k;
@@ -329,6 +379,9 @@ class OauthShell extends Shell {
 
 			$this->out('OAuth Request URI: ' . $Request->signedUri());
 			$this->out('Request URI: ' . $Request->signedUri(false));
+			if (empty($this->options['realm'])) {
+				$this->options['realm'] = '';
+			}
 			$this->out('Authorization header: ' . $Request->oauthHeader(array($this->options['realm'])));
 
             $this->out('Signature: ' . $Request->signature());
@@ -358,18 +411,19 @@ class OauthShell extends Shell {
 		$params = $this->__joinParams($this->__prepareParams(false));
 
 		if (!class_exists('HttpSocket')) {
-			//App::uses('HttpSocket', 'Network');
-			App::uses('HttpSocket', 'OauthLib.Vendor');
+			App::uses('HttpSocket', 'Network/Http');
+			App::uses('HttpSocketProxy', 'OauthLib.Lib/Network/Http');
 		}
-		$socket = & new HttpSocket();
-		$uri = $socket->parseUri($this->options['uri']);
+		$socket =  new HttpSocket();
+		$proxy = new HttpSocketProxy($socket);
+		$uri = $proxy->parseUri($this->options['uri']);
 		if (!empty($uri['query'])) {
 			$params = array_merge($params, $this->__joinParams($uri['query']));
 		}
 		if (!empty($params)) {
 			$uri['query'] = join('&', $params);
 		}
-		$uri = $socket->buildUri($uri);
+		$uri = $proxy->buildUri($uri);
 		$AccessToken = new AccessToken($Consumer, $this->options['oauth_token'], $this->options['oauth_token_secret']);
 		if ($AccessToken) {
           $response = $AccessToken->request(strtoupper($this->options['method']), $uri);

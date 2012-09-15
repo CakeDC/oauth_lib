@@ -146,6 +146,20 @@ class URI {
 		}
 	}
 	
+	public function toArray() {
+		return array(
+			'scheme' => $this->scheme, 
+			'host' => $this->host, 
+			'port' => $this->port, 
+			'user' => $this->user, 
+			'pass' => $this->pass, 
+			'path' => $this->path, 
+			'dir' => $this->dir, 
+			'query' => $this->query, 
+			'fragment' => $this->fragment);
+	}
+	
+	
 /**
  * Parse the URI, return false on error
  *

@@ -9,10 +9,8 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-if (!class_exists('HttpSocket')) {
-	App::uses('HttpSocket', 'OauthLib.Vendor');
-}
-
+App::uses('HttpSocket', 'Network/Http');
+App::uses('HttpSocketProxy', 'OauthLib.Lib/Network/Http');
 App::uses('CakeLog', 'Log');
 App::uses('Exceptions', 'OauthLib.Lib');
 
@@ -265,16 +263,18 @@ class OauthHelper {
  * @return string
  */
 	public function getBaseUri($url) {
+		App::uses('HttpSocketProxy', 'OauthLib.Lib/Network/Http');
 		if (!class_exists('HttpSocket')) {
-			App::uses('HttpSocket', 'OauthLib.Vendor');
+			App::uses('HttpSocket', 'Network/Http');
 		}
 		$socket = & new HttpSocket();
-		$url = $socket->parseUri($url);
+		$proxy = new HttpSocketProxy($socket);
+		$url = $proxy->parseUri($url);
 		$url['query'] = '';
 		$url['fragment'] = '';
 		$url['scheme'] = strtolower($url['scheme']);
 		$url['host'] = strtolower($url['host']);
-		return $socket->buildUri($url);
+		return $proxy->buildUri($url);
 	}
 
 /**
@@ -307,7 +307,9 @@ class OauthHelper {
  * @return array
  */
 	public function parseUri($uri) {
-		$sock = new HttpSocket;
+		App::uses('Uri', 'OauthLib.Lib');
+		$socket = new HttpSocket;
+		$proxy = new HttpSocketProxy($socket);
 		$type = 'FULL';
 
 		if (strpos($uri, '://') === false) {
@@ -315,9 +317,9 @@ class OauthHelper {
 			$uri = 'http://' . $uri;
 		}
 
-		$uriArray = @$sock->parseUri($uri);
+		$uriArray = @$proxy->parseUri($uri);
 		if (!$uriArray) {
-			$uriArray = @$sock->parseUri($localUri);
+			$uriArray = @$proxy->parseUri($localUri);
 			if (!$uriArray) {
 				return false;
 			} else {
@@ -335,6 +337,6 @@ class OauthHelper {
  */
 	public function buildUri($options) {
 		$sock = new HttpSocket;
-		return @$sock->buildUri($options);
+		return @$sock->url($options);
 	}
 }

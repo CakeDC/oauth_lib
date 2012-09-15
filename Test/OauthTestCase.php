@@ -68,4 +68,5 @@ class OauthTestCase extends CakeTestCase {
 		App::uses('RequestFactory', 'OauthLib.Lib');
 		return RequestFactory::proxy(new MockObject(array('parameters' => $params, 'method' => $method, 'uri' => $uri)));
 	}
+
 }

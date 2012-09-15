@@ -18,9 +18,8 @@ if (!class_exists('Signature')) {
 if (!class_exists('OauthHelper')) {
 	App::uses('OauthHelper', 'OauthLib.Lib');
 }
-if (!class_exists('HttpSocket')) {
-	App::uses('HttpSocket', 'OauthLib.Vendor');
-}
+App::uses('HttpSocketProxy', 'OauthLib.Lib/Network/Http');
+App::uses('HttpSocket', 'Network/Http');
 
 /**
  * CakePHP Oauth library http client implementation. This is HttpSocket extension that transarently handle oauth signing.
@@ -304,15 +303,22 @@ class ClientHttp {
 		if (is_object($url) && get_class($url) == 'URI') {
 			$url = $url->toString();
 		}
+        if (is_string($url)) {
+            $uri = $this->parseUri($url);
+        } else {
+            $uri = $url;
+        }
 		if (!is_null($socket)) {
 			$this->sockUri = $socket;
+			$this->sock = $socket;
 		} else {
-			$this->sockUri = & new HttpSocket;
+			$this->sockUri = new HttpSocket;
+			$this->sock = $this->sockUri;
 		}
-		$this->sock = & new HttpSocket;
-		$this->sock->config['request']['uri'] = $this->parseUri($url);
+		$this->proxy = new HttpSocketProxy($this->sock);
+		$this->sock->config['request']['uri'] = $uri;
 		$this->sock->config['request']['header'] = $headers;
-		$this->sockUri->config['request']['uri'] = $this->parseUri($url);
+		$this->sockUri->config['request']['uri'] = $uri;
 		$method = strtoupper($method);
 		$this->method = $method;
 		$this->updateURI($url);
@@ -337,10 +343,12 @@ class ClientHttp {
  */
 	public function updateURI($url = null) {
 		if (!empty($url)) {
-			$this->sock->configUri($this->parseUri($url));
+			$this->proxy->Socket = $this->sock;
+			$this->proxy->configUri($this->proxy->parseUri($url, true));
+			$this->sock = $this->proxy->Socket;
 		}
 	}
-
+	
 /**
  * Accessor to request body (post vars)
  *
@@ -393,6 +401,13 @@ class ClientHttp {
  * @return HttpSocket response
  */
 	public function request($request = null) {
+		$query =  $this->getQuery($request);
+		$response = $this->sock->request($query);
+		OauthHelper::log(array('socket::response' => $this->sock->response));
+		return $this->sock->response;
+	}
+
+	public function getQuery($request = null) {
 		$cfg = $this->sock->config;
 		if (empty($request)) {
 			$request = $this;
@@ -423,11 +438,9 @@ class ClientHttp {
 		}
 
 		OauthHelper::log(array('socket::query' => $query));
-		$response = $this->sock->request($query);
-		OauthHelper::log(array('socket::response' => $this->sock->response));
-		return $this->sock->response;
+		return $query;
 	}
-
+	
 /**
  * Extract path from uri.
  *
@@ -448,8 +461,8 @@ class ClientHttp {
  * @return string
  */	
 	public function localPath() {
-		$glUri = $this->parseUri($this->sock->buildUri($this->sock->config['request']['uri']));
-		return $this->sock->buildUri($glUri, '/%path?%query');
+		$glUri = $this->parseUri($this->proxy->buildUri($this->sock->config['request']['uri']));
+		return $this->proxy->buildUri($glUri, '/%path?%query');
 	}
 
 /**
@@ -505,8 +518,8 @@ class ClientHttp {
  * @return string
  */
 	private function __oauthFullRequestUri(&$http) {
-		$glUri = $this->parseUri($this->sock->buildUri($this->sock->config['request']['uri']));
-		$localPath = $this->sock->buildUri($glUri, '/%path?%query');
+		$glUri = $this->parseUri($this->proxy->buildUri($this->sock->config['request']['uri']));
+		$localPath = $this->proxy->buildUri($glUri, '/%path?%query');
 		$this->path = $localPath;
 		
 		$uri = $http->config['request']['uri'];
@@ -524,10 +537,7 @@ class ClientHttp {
 		if (!empty($http->config['scheme'])) {
 			$uri['scheme'] = $http->config['scheme'];
 		}
-		$url = $this->sock->buildUri($uri);
-		//OauthHelper::log($http->config['request']['uri']);
-		//OauthHelper::log($uri);
-		//OauthHelper::log($url);
+		$url = $this->proxy->buildUri($uri);
 		return $url;
 	}
 
@@ -559,7 +569,7 @@ class ClientHttp {
 	private function __setOAuthQueryString() {
 		$oauthParamsStr = OauthHelper::mapper($this->oauthHelper->oauthParameters(), "&", '');
 		
-		$uri = $this->sock->parseUri($this->path);
+		$uri = $this->proxy->parseUri($this->path);
 		if (!isset($uri['query']) || $uri['query'] == '' || count($uri['query']) == 0) {
 			$uri['query'] = $oauthParamsStr;
 		} else {
@@ -570,9 +580,6 @@ class ClientHttp {
 		$signature = "&oauth_signature=" . OauthHelper::escape($this->oauthHelper->signature());
 		$this->sock->config['request']['uri']['query'] .= $signature;
 		$this->query = $this->sock->config['request']['uri']['query'];
-		//OauthHelper::log('setOAuthQueryString::config' . $this->sock->config);
-		//OauthHelper::log('setOAuthQueryString::query' . $this->query);
-		//$this->sockUri->config['request']['uri']['query'] .= $signature;
 	}
 
 /**
@@ -582,24 +589,7 @@ class ClientHttp {
  * @return string
  */
 	public function parseUri($uri) {
-		$sock = new HttpSocket;
-		$type = 'FULL';
-
-		if (strpos($uri, '://') === false) {
-			$localUri = 'http://sample.com' . $uri;
-			$uri = 'http://' . $uri;
-		}
-
-		$uriArray = @$sock->parseUri($uri);
-		if (!$uriArray) {
-			$uriArray = @$sock->parseUri($localUri);
-			if (!$uriArray) {
-				return false;
-			} else {
-				$type = 'REL';
-			}
-		}
-		return $uriArray;
+		return OauthHelper::parseUri($uri);
 	}
 
 /**

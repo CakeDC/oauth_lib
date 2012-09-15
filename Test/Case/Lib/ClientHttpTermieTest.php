@@ -15,6 +15,7 @@ App::uses('Consumer', 'OauthLib.Lib');
 App::uses('ConsumerToken', 'OauthLib.Token');
 App::uses('RequestProxyController', 'OauthLib.RequestProxy');
 App::uses('OauthAppController', 'OauthLib.Controller');
+App::uses('HttpSocketProxy', 'OauthLib.Lib/Network/Http');
 App::uses('File', 'Utility');
 require_once(CakePlugin::path('OauthLib') . 'Test' . DS . 'Case' . DS . 'Library' . DS . 'Uri.php');
 
@@ -39,7 +40,8 @@ class ClientHttpTermieTest extends CakeTestCase {
 		$this->timestamp = "1199645624";
 		$config = array('host' => 'example.com', 'request' => array('uri' => array('host' => 'example.com')));
 		$this->http = new HttpSocket($config);
-		$this->requestUriN = $this->http->parseUri('http://example.com/test?key=value');
+		$proxy = new HttpSocketProxy($this->http);
+		$this->requestUriN = $proxy->parseUri('http://example.com/test?key=value');
 	}
 
 /**
@@ -70,7 +72,7 @@ class ClientHttpTermieTest extends CakeTestCase {
 		$this->assertEqual('GET', $request->method);
 		$this->assertEqual('', $request->body());
 		$this->assertEqual('', $request->authorization);
-		
+
 		$response = $request->request();
 		$this->assertEqual("200", $response['status']['code']);
 		$this->assertEqual("oauth_token=requestkey&oauth_token_secret=requestsecret", $response['body']);

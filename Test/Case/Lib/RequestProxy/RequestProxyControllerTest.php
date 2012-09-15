@@ -62,6 +62,7 @@ class RequestProxyControllerTest extends CakeTestCase {
 		$this->assertEqual($required, $requestProxyController->parameters());
 		$_SERVER['REQUEST_URI'] = '/test';
 		$_SERVER['SERVER_NAME'] = 'www.org';
+		$_SERVER['SERVER_PORT'] = 80;
 		$this->assertEqual($requestProxyController->uri(), 'http://www.org/test');
 		$_SERVER['HTTPS'] = 'https';
 		$_SERVER['SERVER_PORT'] = 3128;

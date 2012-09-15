@@ -1,14 +1,5 @@
 <?php
-/**
- * Copyright 2010, Cake Development Corporation (http://cakedc.com)
- *
- * Licensed under The MIT License
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
- * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
- */
-
+App::uses('DispatcherFilter', 'Routing');
 if (!class_exists('Signature')) {
 	App::uses('Signature', 'OauthLib.Lib');
 }if (!class_exists('RequestProxyController')) {
@@ -23,66 +14,112 @@ if (!class_exists('RequestFactory')) {
 if (!class_exists('ClientHttp')) {
 	App::uses('ClientHttp', 'OauthLib.Lib');
 }
-App::import('AppController', 'Controller');
+App::uses('ClassRegistry', 'OauthLib.Lib');
 
 /**
- * CakePHP Oauth library
+ * Copyright 2009-2012, Cake Development Corporation (http://cakedc.com)
  *
- * It provides set of methods to use authenticate requests signed with oauth. 
- * Supposed to be used with oauth servers implementations.
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
  *
- * @package oauth_lib
+ * @copyright Copyright 2009-2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class OauthLibAppController extends AppController {
 
 /**
- * Name
+ * Oauth Request Filter
  *
- * @var string $name
+ * @package		Plugin.Oauth
+ * @subpackage	Plugin.Oauth.Routing.Filter
  */
-	public $name = 'OAuthRequests';
+class OauthDispatcherFilter extends DispatcherFilter {
+/**
+ * Priority
+ *
+ * @var integer
+ */
+	public $priority = 3;
+
 
 /**
- * Flag that identify oauth signed request actions
+ * Cake Request
  *
- * @var string $useOauth
+ * @var CakeRequest
  */
-	public $useOauth = false;
+	public $request;
+
+/**
+ * Cake Response
+ *
+ * @var CakeResponse
+ */
+	public $response;
 
 /**
  * Parameters show which action need to check with verifyOauthSignature
  *
  * @var array $requireOAuth
  */
-	public $requireOAuth = array(
-		'actions' => array(),
-		'enabled' => false);
+   	public $requireOAuth = array(
+   		'actions' => array(),
+   		'enabled' => false);
 
 /**
  * tokenData, is ServerToken for the request after verifyOauthSignature
  *
  * @var string $tokenData
  */
-	public $tokenData = null;
+   	public $tokenData = null;
+
 
 /**
- * Before filter callback
- * Load Server models and verify oauth request
+ * beforeDispatch callback
  *
- * @return boolean
+ * @param CakeEvent $event
+ * @return CakeRequest
  */
-	public function beforeFilter() {
-		if ($this->requireOAuth['enabled']) {
-			$this->_loadModels();
-			$actions = $this->requireOAuth['actions'];
-			if (is_array($actions) && (in_array($this->action, $actions) || in_array('*', $actions)) || $actions == '*') {
-				$this->verifyOauthRequest();
-			}
-			$this->configureOAuth();
-			$this->_afterOauthChecked();
-		} else {
-			parent::beforeFilter();
+	public function beforeDispatch($event) {
+		$this->request = $event->data['request'];
+		$this->response = $event->data['response'];
+
+		if (true || $this->_isOauthEndpoint($this->request)) {
+            if ($this->verifyOauthRequest()) {
+
+            } else {
+                $event->stopPropagation();
+                // return $response;
+                exit;
+            }
 		}
+	}
+
+	protected function _oauthServerCheck() {
+            $this->verifyOauthRequest();
+	}
+
+/**
+ * Checks if the requested url is the Xhttp endpoint
+ *
+ * @param CakeRequest $request
+ * @return boolean True on success
+ */
+	protected function _isOauthEndpoint($request) {
+		$endpoints = Configure::read('Oauth.endpoints');
+		if (empty($endpoints)) {
+			$endpoints = '/oauth/service';
+		}
+
+		$url = $request->here;
+		if (substr($url, -1) == '/') {
+			$url = substr($url, 0, -1);
+		}
+
+		foreach ($endpoints as $endpoint) {
+			if (strpos($url, $endpoint) === 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 /**
@@ -93,22 +130,7 @@ class OauthLibAppController extends AppController {
 	public function _loadOauthModels() {
 	}
 
-/**
- * load models
- *
- * @return void
- */
-	public function _loadModels() {
-	}
 
-/**
- * after Oauth Checked callback
- *
- * @return void
- */
-	public function _afterOauthChecked() {
-	}
-	
 /**
  * Do verify for oauth request
  *
@@ -124,13 +146,14 @@ class OauthLibAppController extends AppController {
  * @return boolean
  */
 	public function verifyOauthSignature() {
-		$proxy = & new RequestProxyController($this);
+		$proxy = new RequestProxyController($this);
 		$params = $proxy->parameters();
 		$token = '';
 		if (isset($params['oauth_token'])) {
 			$token = $params['oauth_token'];
 		}
-		$serverRegistry = ClassRegistry::init('OauthServer.ServerRegistry');
+        App::uses('ClassRegistry', 'Utility');
+        $serverRegistry = ClassRegistry::init('OauthServer.ServerRegistry');
 		$this->tokenData = $serverRegistry->AccessServerToken->find('first', array(
 			'AccessServerToken.token' => $token,
 			'AccessServerToken.authorized' => 1));
@@ -239,19 +262,9 @@ class OauthLibAppController extends AppController {
  *
  * @return string
  */
-	protected function _gatherUrl() {
-		$params = $this->params['url'];
-		$url = $params['url'];
-		unset($params['url']);
-		if (count($params) > 0) {
-			$url .= '?' . OauthHelper::mapper($params, '&', '');
-		}
-		if (strlen($url) > 0 && strpos($url, 0, 1) != '/') {
-			$url = '/' . $url;
-		}
-		if (strlen($url) == 0) {
-			$url = '/';
-		}
-		return $url;
+	protected function _gatherUrl($request) {
+        return $request->here(false);
 	}
+	
+	
 }

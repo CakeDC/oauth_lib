@@ -160,16 +160,16 @@ class ConsumerTest extends OauthTestCase {
 	        'access_token_uri' => '/oauth/example/access_token.php',
 	        'authorize_uri' => '/oauth/example/authorize.php',
 	        'scheme' => 'header'));
-		$options=array('nonce' => 'nonce', 'timestamp' => time());
+		//$options=array('nonce' => 'nonce', 'timestamp' => '1000000');
 		$this->requestUri = new URI('http://term.ie');
 		$config = array('host' => 'term.ie', 'request' => array('uri' => array('host' => 'term.ie')));
 		$this->consumer->http = new HttpSocket($config);
 		$request = new ClientHttp($this->consumer->http, "/oauth/example/request_token.php");
 		$this->requestToken = $this->consumer->getRequestToken(array(), array(), $this->Token);
-		$this->accessToken = $this->requestToken->getAccessToken();
 
-		$response = $this->accessToken->get('/oauth/example/echo_api.php?echo=hello');
-		$this->assertNotNull($response);
+		$accessToken = $this->requestToken->getAccessToken();
+        $response = $accessToken->get('/oauth/example/echo_api.php?echo=hello');
+        $this->assertNotNull($response);
 		$this->assertEqual('200', $response['status']['code']);
 		$this->assertEqual('echo=hello', $response['body']);
 		
