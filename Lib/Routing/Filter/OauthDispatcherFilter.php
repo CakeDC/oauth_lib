@@ -82,19 +82,14 @@ class OauthDispatcherFilter extends DispatcherFilter {
 		$this->request = $event->data['request'];
 		$this->response = $event->data['response'];
 
-		if (true || $this->_isOauthEndpoint($this->request)) {
-            if ($this->verifyOauthRequest()) {
+		if ($this->_isOauthEndpoint($this->request)) {
+            if ($this->verifyOauthSignature()) {
 
             } else {
                 $event->stopPropagation();
-                // return $response;
                 exit;
             }
 		}
-	}
-
-	protected function _oauthServerCheck() {
-            $this->verifyOauthRequest();
 	}
 
 /**
@@ -106,7 +101,7 @@ class OauthDispatcherFilter extends DispatcherFilter {
 	protected function _isOauthEndpoint($request) {
 		$endpoints = Configure::read('Oauth.endpoints');
 		if (empty($endpoints)) {
-			$endpoints = '/oauth/service';
+			$endpoints = array('/oauth/service');
 		}
 
 		$url = $request->here;
@@ -120,24 +115,6 @@ class OauthDispatcherFilter extends DispatcherFilter {
 			}
 		}
 		return false;
-	}
-
-/**
- * load oauth server models callback
- *
- * @return void
- */
-	public function _loadOauthModels() {
-	}
-
-
-/**
- * Do verify for oauth request
- *
- * @return boolean
- */
-	public function verifyOauthRequest() {
-		return $this->verifyOauthSignature();
 	}
 
 /**
@@ -155,8 +132,9 @@ class OauthDispatcherFilter extends DispatcherFilter {
         App::uses('ClassRegistry', 'Utility');
         $serverRegistry = ClassRegistry::init('OauthServer.ServerRegistry');
 		$this->tokenData = $serverRegistry->AccessServerToken->find('first', array(
+			'conditions' => array(
 			'AccessServerToken.token' => $token,
-			'AccessServerToken.authorized' => 1));
+			'AccessServerToken.authorized' => 1)));
 		try {
 			$valid = Signature::verify($this, array(
 				'consumer_secret' => $this->tokenData['ServerRegistry']['consumer_secret'],

@@ -75,6 +75,13 @@ class OauthAuthentication {
 			$consumer = new Consumer($authInfo['Consumer']['consumer_token'], $authInfo['Consumer']['consumer_secret'], $authInfo);
             $consumer->http = $http;
 			$request = new ClientHttp($http,  $url, array(), $http->request['method']);
+			$data = $http->request['body'];
+			if (is_array($data)) {
+				$request->setFormData($data);
+			} elseif (!empty($data)) {
+				$request->body($data);
+			}
+			
 			$token = new AccessToken($consumer, $authInfo['Token']['token'], $authInfo['Token']['secret']);
 			$consumer->sign($request, $token, $authInfo);
 
