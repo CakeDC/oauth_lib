@@ -129,10 +129,18 @@ class OauthAuthComponent extends Object {
 		if (isset($params['oauth_token'])) {
 			$token = $params['oauth_token'];
 		}
-		$serverRegistry = & new ServerRegistry;
-		$this->tokenData = $serverRegistry->AccessServerToken->find(array('AccessServerToken.token' => $token, 'AccessServerToken.authorized' => 1));
+		$serverRegistry = ClassRegistry::init('OauthServer.ServerRegistry');
+		$this->tokenData = $serverRegistry->AccessServerToken->find('first', array(
+			'conditions' => array(
+				'AccessServerToken.token' => $token,
+				'AccessServerToken.authorized' => 1)));
+
 		try {
-			$valid = Signature::verify($this->Controller, array('consumer_secret' => $this->tokenData['ServerRegistry']['consumer_secret'], 'token_secret' => $this->tokenData['AccessServerToken']['token_secret']));
+			if (empty($this->tokenData['ServerRegistry']) || empty($this->tokenData['AccessServerToken'])) {
+				$valid = false;
+			} else {
+				$valid = Signature::verify($this->Controller, array('consumer_secret' => $this->tokenData['ServerRegistry']['consumer_secret'], 'token_secret' => $this->tokenData['AccessServerToken']['token_secret']));
+			}
 		} catch(Exception $e) {
 			$valid = false;
 		}
@@ -260,5 +268,13 @@ class OauthAuthComponent extends Object {
 			$url = '/';
 		}
 		return $url;
+	}
+
+	public function beforeRedirect() {
+
+	}
+
+	public function startup() {
+
 	}
 }
