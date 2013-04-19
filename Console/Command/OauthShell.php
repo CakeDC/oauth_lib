@@ -67,7 +67,8 @@ class OauthShell extends Shell {
 			))
 			->addOption('body', array(
 				'help' => 'Use the request body for OAuth parameters.',
-				'boolean' => true,
+//				'boolean' => true,
+				'required' => false
 			))
 			->addOption('query_string', array(
 				'help' => 'Use the query string for OAuth parameters.',
@@ -183,6 +184,7 @@ class OauthShell extends Shell {
 			'callback_url' => 'oauth_callback',
 			'request_token_url' => 'request_token_url',
 			'scope' => 'scope',
+			'body' => 'body',
 			'username' => 'username',
 			'password' => 'password',
 		);
@@ -405,6 +407,7 @@ class OauthShell extends Shell {
 			'scheme' => $this->options['scheme'],
 			'http_method' => $this->options['method']
 		);
+
 		$Consumer = new Consumer($this->options['oauth_consumer_key'], $this->options['oauth_consumer_secret'], $options);
 		$Consumer->http = new HttpSocket($this->options['uri']);
 		
@@ -426,9 +429,13 @@ class OauthShell extends Shell {
 		$uri = $proxy->buildUri($uri);
 		$AccessToken = new AccessToken($Consumer, $this->options['oauth_token'], $this->options['oauth_token_secret']);
 		if ($AccessToken) {
-          $response = $AccessToken->request(strtoupper($this->options['method']), $uri);
-		  $this->out($response['status']['code'] . ' ');
-		  $this->out($response['body']);
+			$params = array();
+			if (!empty($this->options['body'])) {
+				$params['data'] = $this->options['body'];
+			}
+          	$response = $AccessToken->request(strtoupper($this->options['method']), $uri, array(), $params);
+	 		$this->out($response['status']['code'] . ' ');
+		  	$this->out($response['body']);
 		}
 		
 	}
