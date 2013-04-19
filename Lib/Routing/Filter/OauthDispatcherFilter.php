@@ -84,9 +84,9 @@ class OauthDispatcherFilter extends DispatcherFilter {
 
 		if ($this->_isOauthEndpoint($this->request)) {
             if ($this->verifyOauthSignature()) {
-
-            } else {
-                $event->stopPropagation();
+				$event->Auth = $this->_currentTokens();
+			} else {
+				$event->stopPropagation();
                 exit;
             }
 		}
@@ -129,6 +129,7 @@ class OauthDispatcherFilter extends DispatcherFilter {
 		if (isset($params['oauth_token'])) {
 			$token = $params['oauth_token'];
 		}
+
         App::uses('ClassRegistry', 'Utility');
         $serverRegistry = ClassRegistry::init('OauthServer.ServerRegistry');
 		$this->tokenData = $serverRegistry->AccessServerToken->find('first', array(
@@ -136,9 +137,13 @@ class OauthDispatcherFilter extends DispatcherFilter {
 			'AccessServerToken.token' => $token,
 			'AccessServerToken.authorized' => 1)));
 		try {
-			$valid = Signature::verify($this, array(
-				'consumer_secret' => $this->tokenData['ServerRegistry']['consumer_secret'],
-				'token_secret' => $this->tokenData['AccessServerToken']['token_secret']));
+			if (empty($this->tokenData['ServerRegistry']) || empty($this->tokenData['AccessServerToken'])) {
+				$valid = false;
+			} else {
+				$valid = Signature::verify($this, array(
+					'consumer_secret' => $this->tokenData['ServerRegistry']['consumer_secret'],
+					'token_secret' => $this->tokenData['AccessServerToken']['token_secret']));
+			}
 		} catch(Exception $e) {
 			$valid = false;
 		}
@@ -149,6 +154,21 @@ class OauthDispatcherFilter extends DispatcherFilter {
 			exit;
 		}
 		return $valid;
+	}
+
+
+	protected function _currentTokens() {
+		if (empty($this->tokenData['ServerRegistry']) || empty($this->tokenData['AccessServerToken'])) {
+			return array();
+		}
+
+		return array('OauthLib.Oauth' => array(
+				'Consumer' => array(
+					'consumer_token' => $this->tokenData['ServerRegistry']['consumer_key'],
+					'consumer_secret' => $this->tokenData['ServerRegistry']['consumer_secret']),
+				'Token' => array(
+					'token' => $this->tokenData['AccessServerToken']['token'],
+					'secret' => $this->tokenData['AccessServerToken']['token_secret'])));
 	}
 
 /**
