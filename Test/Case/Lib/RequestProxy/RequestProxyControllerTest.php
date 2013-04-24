@@ -48,7 +48,7 @@ class RequestProxyControllerTest extends CakeTestCase {
 	public function testParametersParsed() {
 		$cakeRequest = new CakeRequest();
 		$request = &new OauthLibAppController($cakeRequest);
-		$request->request->params['url'] = array('test' => 'data');
+		$request->request->query = array('test' => 'data');
 		$requestProxyController = & new RequestProxyController($request);
 		$_ENV['Authorization'] = "OAuth realm=\"\", oauth_nonce=\"225579211881198842005988698334675835446\", oauth_signature_method=\"HMAC-SHA1\", oauth_token=\"token_411a7f\", oauth_timestamp=\"1199645624\", oauth_consumer_key=\"consumer_key_86cad9\", oauth_signature=\"26g7wHTtNO6ZWJaLltcueppHYiI%3D\", oauth_version=\"1.0\"";
 		$required = array('oauth_consumer_key' => 'consumer_key_86cad9',
@@ -59,6 +59,7 @@ class RequestProxyControllerTest extends CakeTestCase {
 			'oauth_token' => 'token_411a7f',
 			'oauth_version' => '1.0',
 			'test' => 'data');
+
 		$this->assertEqual($required, $requestProxyController->parameters());
 		$_SERVER['REQUEST_URI'] = '/test';
 		$_SERVER['SERVER_NAME'] = 'www.org';
