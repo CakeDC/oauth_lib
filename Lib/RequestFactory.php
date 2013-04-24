@@ -37,7 +37,7 @@ class RequestFactory {
  *
  * @return RequestFactory instance
  */
-	public function &getInstance() {
+	public static function &getInstance() {
 		static $instance = array();
 		if (!isset($instance[0]) || !$instance[0]) {
 			$instance[0] = new RequestFactory();
@@ -51,7 +51,7 @@ class RequestFactory {
  * @param string $proxy
  * @param string $class
  */
-	public function register($proxy, $class) {	
+	public static function register($proxy, $class) {	
 		$_this = RequestFactory::getInstance();
 		$_this->availableProxies[$proxy] = $class;
 	}
@@ -63,7 +63,7 @@ class RequestFactory {
  * @param string $options
  * @return RequestProxy
  */
-	public function proxy(&$request, $options = array()) {
+	public static function proxy(&$request, $options = array()) {
 		$_this = RequestFactory::getInstance();
 		if (is_object($request) && in_array(get_class($request), $_this->availableProxies)) {
 			return $request;

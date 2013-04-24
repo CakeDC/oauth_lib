@@ -107,6 +107,7 @@ class RequestProxyController extends RequestProxyBase {
 		if (isset($this->request->request->query)) {
 			$params = $this->request->request->query;
 		}
+		unset($params['url']);
 		return $params;
 	}
 

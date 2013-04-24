@@ -34,7 +34,7 @@ class Signature {
  * @param string $signatureMethod
  * @param string $class
  */
-	public function register($signatureMethod, $class) {
+	public static function register($signatureMethod, $class) {
 		$_this = Signature::getInstance();
 		$_this->availableMethods[$signatureMethod] = $class;
 	}
@@ -44,7 +44,7 @@ class Signature {
  *
  * @return Signature instance
  */
-	public function &getInstance() {
+	public static function &getInstance() {
 		static $instance = array();
 		if (!isset($instance[0]) || !$instance[0]) {
 			$instance[0] = new Signature();
@@ -58,7 +58,7 @@ class Signature {
  * @param Request $request
  * @param array $options
  */
-	public function build($request, $options = array()) {
+	public static function build($request, $options = array()) {
 		$_this = Signature::getInstance();
 		$request = RequestFactory::proxy($request, $options);
 		$signatureMethod = $request->signatureMethod();
@@ -77,7 +77,7 @@ class Signature {
  * @param array $options
  * @return string request signature
  */
-	public function sign($request, $options = array()) {
+	public static function sign($request, $options = array()) {
 		$class = Signature::build($request, $options);
 		if (is_object($class)) {
 			return $class->signature();
@@ -93,7 +93,7 @@ class Signature {
  * @param array $options
  * @return boolean
  */
-	public function verify($request, $options = array()) {
+	public static function verify($request, $options = array()) {
 		$class = Signature::build($request, $options);
 		if (is_object($class)) {
 			return $class->verify();
