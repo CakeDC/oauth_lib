@@ -14,7 +14,7 @@ App::uses('RequestProxyController', 'OauthLib.Lib/RequestProxy');
 App::uses('OauthHelper', 'OauthLib.Lib');
 App::uses('RequestFactory', 'OauthLib.Lib');
 App::uses('ClientHttp', 'OauthLib.Lib');
-App::import('AppController', 'Controller');
+App::uses('AppController', 'Controller');
 
 /**
  * CakePHP Oauth library
