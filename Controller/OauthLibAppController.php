@@ -10,7 +10,7 @@
  */
 
 App::uses('Signature', 'OauthLib.Lib');
-App::uses('RequestProxyController', 'OauthLib.Lib/RequestProxy');
+App::uses('RequestProxyController', 'OauthLib.Requestproxy');
 App::uses('OauthHelper', 'OauthLib.Lib');
 App::uses('RequestFactory', 'OauthLib.Lib');
 App::uses('ClientHttp', 'OauthLib.Lib');

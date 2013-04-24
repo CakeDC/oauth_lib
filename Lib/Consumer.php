@@ -338,7 +338,8 @@ class Consumer {
  */
 	public function sign(&$request, $token = null, $requestOptions = array()) {
 		$options = array_merge($this->options, $requestOptions);
-		return $request->oauth($this->http(), $this, $token, $options);
+		$connection = $this->http();
+		return $request->oauth($connection, $this, $token, $options);
 	}
 
 /**
