@@ -78,13 +78,14 @@ class OauthDispatcherFilter extends DispatcherFilter {
  * @param CakeEvent $event
  * @return CakeRequest
  */
-	public function beforeDispatch($event) {
+	public function beforeDispatch(CakeEvent $event) {
 		$this->request = $event->data['request'];
 		$this->response = $event->data['response'];
 
 		if ($this->_isOauthEndpoint($this->request)) {
             if ($this->verifyOauthSignature()) {
 				$event->Auth = $this->_currentTokens();
+				$event->TokenData = $this->tokenData;
 			} else {
 				$event->stopPropagation();
                 exit;
