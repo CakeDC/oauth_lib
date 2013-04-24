@@ -40,7 +40,7 @@ class Signature {
  * @param string $signatureMethod
  * @param string $class
  */
-	public function register($signatureMethod, $class) {
+	public static function register($signatureMethod, $class) {
 		$_this = Signature::getInstance();
 		$_this->availableMethods[$signatureMethod] = $class;
 	}
@@ -50,7 +50,7 @@ class Signature {
  *
  * @return Signature instance
  */
-	public function &getInstance() {
+	public static function &getInstance() {
 		static $instance = array();
 		if (!isset($instance[0]) || !$instance[0]) {
 			$instance[0] = new Signature();

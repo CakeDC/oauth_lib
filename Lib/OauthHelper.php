@@ -37,7 +37,7 @@ class OauthHelper {
  * @param integer $powerOfTwo
  * @return string
  */
-	public function random($powerOfTwo) {
+	public static function random($powerOfTwo) {
 		$prefix = 'P';
 		if (extension_loaded('bcmath')) {
 			OauthHelper::log($prefix . OauthHelper::bcrandom(1, bcpow(2, $powerOfTwo)));
@@ -58,7 +58,7 @@ class OauthHelper {
  * @param integer $max
  * @return string
  */
-	function bcrandom($min, $max) {
+	public static function bcrandom($min, $max) {
 		bcscale(0);
 		if (bccomp($max,$min)!=1) {
 			return 0;
@@ -102,7 +102,7 @@ class OauthHelper {
  * @param integer $size
  * @return string
  */
-	public function mapper($params, $separator, $quote = '"') {
+	public static function mapper($params, $separator, $quote = '"') {
 		$paramList = array();
 		foreach($params as $k => $v) {
 			$paramList[] = urlencode($k) . '=' . $quote.urlencode($v) . $quote;
@@ -116,7 +116,7 @@ class OauthHelper {
  * @param mixed $value
  * @return string
  */
-	public function escape($value) {
+	public static function escape($value) {
 		if ($value === false) {
 			return $value;
 		} else {
@@ -134,7 +134,7 @@ class OauthHelper {
  * @param integer $size
  * @return string
  */
-	public function generateKey($size = 32) {
+	public static function generateKey($size = 32) {
 		$randomBytes = '';
 		for ($i = 0;$i<$size;$i++) {
 			$randomBytes.= chr(rand(1, 255));
@@ -149,7 +149,7 @@ class OauthHelper {
  * @param string $s
  * @return string
  */
-	public function urlencode($s) {
+	public static function urlencode($s) {
 		if ($s === false) {
 			return $s;
 		} else {
@@ -164,7 +164,7 @@ class OauthHelper {
  * @param string $s
  * @return string
  */
-	public function urldecode($s) {
+	public static function urldecode($s) {
 		if ($s === false) {
 			return $s;
 		} else {
@@ -180,11 +180,11 @@ class OauthHelper {
  * @param string $s
  * @return string
  */
-	public function urltranscode($s) {
+	public static function urltranscode($s) {
 		if ($s === false) {
 			return $s;
 		} else {
-			return $this->urlencode(urldecode($s));
+			return OauthHelper::urlencode(urldecode($s));
 		}
 	}
 
@@ -195,7 +195,7 @@ class OauthHelper {
  * @param string $typ, type of log
  * @return bool log write result
  */	
-	public function log($msg, $typ = 'oauth') {
+	public static function log($msg, $typ = 'oauth') {
 		if (Configure::read('debug') == 0) {
 			return true;
 		}
@@ -248,7 +248,7 @@ class OauthHelper {
  * @param string $str
  * @return string
  */
-	public function unescape($str) {
+	public static function unescape($str) {
 		$escaped = OauthHelper::regex('Escaped');
 		if (preg_match_all($escaped, $str, $matches) && count($matches) > 0) {
 			$str = preg_replace_callback($escaped, create_function('$matches', 'return chr(hexdec(substr($matches[0], 1)));'), $str);
@@ -262,7 +262,7 @@ class OauthHelper {
  * @param string $url
  * @return string
  */
-	public function getBaseUri($url) {
+	public static function getBaseUri($url) {
 		App::uses('HttpSocketProxy', 'OauthLib.Lib/Network/Http');
 		if (!class_exists('HttpSocket')) {
 			App::uses('HttpSocket', 'Network/Http');
@@ -284,7 +284,7 @@ class OauthHelper {
  * For each parameter, the name is separated from the corresponding value by an "=" character, 
  * even if the value is empty. Each name-value pair is separated by an "&" character.
  */
-	public function normalize($params) {
+	public static function normalize($params) {
 		ksort($params);
 		$paramList = array();
 		foreach($params as $k => $values) {
@@ -306,7 +306,7 @@ class OauthHelper {
  * @param string $uri
  * @return array
  */
-	public function parseUri($uri) {
+	public static function parseUri($uri) {
 		App::uses('Uri', 'OauthLib.Lib');
 		$socket = new HttpSocket;
 		$proxy = new HttpSocketProxy($socket);
@@ -335,7 +335,7 @@ class OauthHelper {
  * @param array $options
  * @return string
  */
-	public function buildUri($options) {
+	public static function buildUri($options) {
 		$sock = new HttpSocket;
 		return @$sock->url($options);
 	}
