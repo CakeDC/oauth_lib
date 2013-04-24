@@ -196,11 +196,8 @@ class OauthHelper {
  * @return bool log write result
  */	
 	public static function log($msg, $typ = 'oauth') {
-		if (Configure::read('debug') == 0) {
+		if (Configure::read('debug') == 0 && Configure::read('Oauth.log')) {
 			return true;
-		}
-		if (!class_exists('CakeLog')) {
-			uses('cake_log');
 		}
 		if (!class_exists('CakeLog')) {
 			return;
