@@ -138,7 +138,7 @@ class OauthAuthComponent extends Object {
 		if (!empty($config['exit']) && !$valid) {
 			Configure::write('debug', 0);
 			header("HTTP/1.1 401 Unauthorized");
-			echo "Invalid OAuth Request";
+			echo "Invalid OAuth Request (component)";
 			exit;
 		}
 		return $valid;

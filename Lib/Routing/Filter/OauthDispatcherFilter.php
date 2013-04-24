@@ -1,11 +1,12 @@
 <?php
 App::uses('DispatcherFilter', 'Routing');
+
 App::uses('Signature', 'OauthLib.Lib');
 App::uses('RequestProxyController', 'OauthLib.Lib/RequestProxy');
 App::uses('OauthHelper', 'OauthLib.Lib');
 App::uses('RequestFactory', 'OauthLib.Lib');
 App::uses('ClientHttp', 'OauthLib.Lib');
-App::uses('ClassRegistry', 'OauthLib.Lib');
+App::uses('ClassRegistry', 'Utility');
 
 /**
  * Copyright 2009-2012, Cake Development Corporation (http://cakedc.com)
@@ -121,19 +122,20 @@ class OauthDispatcherFilter extends DispatcherFilter {
 			$token = $params['oauth_token'];
 		}
 
-        App::uses('ClassRegistry', 'Utility');
         $serverRegistry = ClassRegistry::init('OauthServer.ServerRegistry');
 		$this->tokenData = $serverRegistry->AccessServerToken->find('first', array(
 			'conditions' => array(
-			'AccessServerToken.token' => $token,
-			'AccessServerToken.authorized' => 1)));
+				'AccessServerToken.token' => $token,
+				'AccessServerToken.authorized' => 1
+			)
+		));
+		$valid = false;
 		try {
-			if (empty($this->tokenData['ServerRegistry']) || empty($this->tokenData['AccessServerToken'])) {
-				$valid = false;
-			} else {
+			if (!empty($this->tokenData['ServerRegistry']) || !empty($this->tokenData['AccessServerToken'])) {
 				$valid = Signature::verify($this, array(
 					'consumer_secret' => $this->tokenData['ServerRegistry']['consumer_secret'],
-					'token_secret' => $this->tokenData['AccessServerToken']['token_secret']));
+					'token_secret' => $this->tokenData['AccessServerToken']['token_secret']
+				));
 			}
 		} catch(Exception $e) {
 			$valid = false;
@@ -141,7 +143,7 @@ class OauthDispatcherFilter extends DispatcherFilter {
 		if (!$valid) {
 			Configure::write('debug', 0);
 			header("HTTP/1.1 401 Unauthorized");
-			echo "Invalid OAuth Request";
+			echo "Invalid OAuth Request (dispatch)";
 			exit;
 		}
 		return $valid;

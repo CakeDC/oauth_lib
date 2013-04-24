@@ -135,7 +135,7 @@ class OauthLibAppController extends AppController {
 		if (!$valid) {
 			Configure::write('debug', 0);
 			header("HTTP/1.1 401 Unauthorized");
-			echo "Invalid OAuth Request";
+			echo "Invalid OAuth Request (controller)";
 			exit;
 		}
 		return $valid;

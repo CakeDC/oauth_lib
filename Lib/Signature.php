@@ -218,7 +218,8 @@ class SignatureBase {
 		OauthHelper::log(array(
 			'req_sig' => $this->request->signature(),
 			'local_sig' => $this->signature(),
-			'request' => get_class($this->request)));
+			'request' => get_class($this->request)
+		));
 		return $this->eq($this->request->signature());
 	}
 
