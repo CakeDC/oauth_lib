@@ -9,20 +9,11 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-if (!class_exists('Signature')) {
-	App::uses('Signature', 'OauthLib.Lib');
-}if (!class_exists('RequestProxyController')) {
-	App::uses('RequestProxyController', 'OauthLib.Requestproxy');
-}
-if (!class_exists('OauthHelper')) {
-	App::uses('OauthHelper', 'OauthLib.Lib');
-}
-if (!class_exists('RequestFactory')) {
-	App::uses('RequestFactory', 'OauthLib.Lib');
-}
-if (!class_exists('ClientHttp')) {
-	App::uses('ClientHttp', 'OauthLib.Lib');
-}
+App::uses('Signature', 'OauthLib.Lib');
+App::uses('RequestProxyController', 'OauthLib.Lib/RequestProxy');
+App::uses('OauthHelper', 'OauthLib.Lib');
+App::uses('RequestFactory', 'OauthLib.Lib');
+App::uses('ClientHttp', 'OauthLib.Lib');
 App::import('AppController', 'Controller');
 
 /**

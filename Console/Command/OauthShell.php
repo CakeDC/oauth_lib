@@ -413,10 +413,9 @@ class OauthShell extends Shell {
 		
 		$params = $this->__joinParams($this->__prepareParams(false));
 
-		if (!class_exists('HttpSocket')) {
-			App::uses('HttpSocket', 'Network/Http');
-			App::uses('HttpSocketProxy', 'OauthLib.Lib/Network/Http');
-		}
+		App::uses('HttpSocket', 'Network/Http');
+		App::uses('HttpSocketProxy', 'OauthLib.Lib/Network/Http');
+		
 		$socket =  new HttpSocket();
 		$proxy = new HttpSocketProxy($socket);
 		$uri = $proxy->parseUri($this->options['uri']);

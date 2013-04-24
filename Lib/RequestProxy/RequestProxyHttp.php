@@ -9,14 +9,10 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-if (!class_exists('HttpSocket')) {
-			App::uses('HttpSocketProxy', 'OauthLib.Lib/Network/Http');
-			App::uses('HttpSocket', 'Network/Http');
-			// App::uses('HttpSocket', 'OauthLib.Vendor');
-}
-if (!class_exists('ClientHttp')) {
-	App::uses('ClientHttp', 'OauthLib.Lib');
-}
+// App::uses('HttpSocket', 'OauthLib.Vendor');
+App::uses('HttpSocketProxy', 'OauthLib.Lib/Network/Http');
+App::uses('HttpSocket', 'Network/Http');
+App::uses('ClientHttp', 'OauthLib.Lib');
 RequestFactory::register('ClientHttp', 'RequestProxyHttp');
 
 /**

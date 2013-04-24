@@ -264,9 +264,7 @@ class OauthHelper {
  */
 	public function getBaseUri($url) {
 		App::uses('HttpSocketProxy', 'OauthLib.Lib/Network/Http');
-		if (!class_exists('HttpSocket')) {
-			App::uses('HttpSocket', 'Network/Http');
-		}
+		App::uses('HttpSocket', 'Network/Http');
 		$socket = & new HttpSocket();
 		$proxy = new HttpSocketProxy($socket);
 		$url = $proxy->parseUri($url);

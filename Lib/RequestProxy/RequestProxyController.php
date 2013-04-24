@@ -9,12 +9,8 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-if (!class_exists('OauthHelper')) {
-	App::uses('OauthHelper', 'OauthLib.Lib');
-}
-if (!class_exists('RequestFactory')) {
-	App::uses('RequestFactory', 'OauthLib.Lib');
-}
+App::uses('OauthHelper', 'OauthLib.Lib');
+App::uses('RequestFactory', 'OauthLib.Lib');
 
 RequestFactory::register('OauthLibAppController', 'RequestProxyController');
 RequestFactory::register('OauthAppController', 'RequestProxyController');

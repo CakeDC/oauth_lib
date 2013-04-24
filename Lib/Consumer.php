@@ -10,8 +10,7 @@
  */
 
 App::uses('HttpSocketProxy', 'OauthLib.Lib/Network/Http');
-App::uses('HttpSocket', 'Network/Http');
-App::import('Model', 'OauthLib.Socket');
+App::uses('Socket', 'OauthLib.Model'); // @todo no such file
 App::uses('ClientHttp', 'OauthLib.Lib');
 App::uses('OauthHelper', 'OauthLib.Lib');
 App::uses('AccessToken', 'OauthLib.Token');

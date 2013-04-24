@@ -9,15 +9,9 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-if (!class_exists('Hmac')) {
-	App::uses('Hmac', 'OauthLib.Lib');
-}
-if (!class_exists('RequestFactory')) {
-	App::uses('RequestFactory', 'OauthLib.Lib');
-}
-if (!class_exists('OauthHelper')) {
-	App::uses('OauthHelper', 'OauthLib.Lib');
-}
+App::uses('Hmac', 'OauthLib.Lib');
+App::uses('RequestFactory', 'OauthLib.Lib');
+App::uses('OauthHelper', 'OauthLib.Lib');
 
 /**
  * Signature factory used to proxy signatures classes based on signature type.
