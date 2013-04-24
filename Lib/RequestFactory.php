@@ -77,7 +77,7 @@ class RequestFactory {
  * @param string $options
  * @return RequestProxy
  */
-	public function proxy(&$request, $options = array()) {
+	public static function proxy(&$request, $options = array()) {
 		$_this = RequestFactory::getInstance();
 		if (is_object($request) && in_array(get_class($request), $_this->availableProxies)) {
 			return $request;
