@@ -515,7 +515,6 @@ class ClientHttp {
 		$glUri = $this->parseUri($this->proxy->buildUri($this->sock->config['request']['uri']));
 		$localPath = $this->proxy->buildUri($glUri, '/%path?%query');
 		$this->path = $localPath;
-		
 		$uri = $http->config['request']['uri'];
 		$uri['path'] = $glUri['path'];
 		if (isset($glUri['query'])) {
