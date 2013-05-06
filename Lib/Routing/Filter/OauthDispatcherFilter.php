@@ -144,7 +144,7 @@ class OauthDispatcherFilter extends DispatcherFilter {
 		if (!$valid) {
 			Configure::write('debug', 0);
 			header("HTTP/1.1 401 Unauthorized");
-			echo "Invalid OAuth Request (dispatch)";
+			echo "Invalid OAuth Request";
 			exit;
 		}
 		return $valid;
