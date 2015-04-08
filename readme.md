@@ -4,7 +4,7 @@ Version 1.1 for cake 2.x
 
 Oauth library is implementation of the [OAuth 1.0 Protocol](http://tools.ietf.org/html/rfc5849).
 
-## Oauth Consumer implemenatation ##
+## Oauth Consumer implementation ##
 
 Initialize consumer:
 
